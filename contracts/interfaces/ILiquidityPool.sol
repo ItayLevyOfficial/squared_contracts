@@ -3,7 +3,7 @@
 pragma solidity 0.6.11;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
-import "./IManager.sol";
+import "../interfaces/IManager.sol";
 
 /// @title Interface for Pool
 /// @notice Allows users to deposit ERC-20 tokens to be deployed to market makers.

@@ -11,10 +11,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
-import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
-import "./ILiquidityPool.sol";
-import "./IDefiRound.sol";
+import "../interfaces/ILiquidityPool.sol";
+import "../interfaces/IDefiRound.sol";
 import "../interfaces/IWETH.sol";
+import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
 
 contract DefiRound is IDefiRound, Ownable {
     using SafeMath for uint256;
