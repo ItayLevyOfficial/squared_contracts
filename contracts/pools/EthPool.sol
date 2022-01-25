@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.6.11;
-pragma experimental ABIEncoderV2;
 
 import "../interfaces/ILiquidityEthPool.sol";
 import "../interfaces/IManager.sol";
@@ -15,11 +14,8 @@ import {ERC20Upgradeable as ERC20} from "@openzeppelin/contracts-upgradeable/tok
 import {IERC20Upgradeable as IERC20} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import {SafeERC20Upgradeable as SafeERC20} from "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
 import {PausableUpgradeable as Pausable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
-import "../interfaces/events/BalanceUpdateEvent.sol";
-import "../interfaces/events/Destinations.sol";
-import "../interfaces/events/IEventSender.sol";
 
-contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, IEventSender {
+contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable {
     using SafeMath for uint256;
     using SafeERC20 for IERC20;
     using Address for address;
@@ -35,23 +31,16 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
     // fAsset holder -> WithdrawalInfo
     mapping(address => WithdrawalInfo) public override requestedWithdrawals;
 
-    // NonReentrant
-    bool private _entered;
-
-    bool public _eventSend;
-    Destinations public destinations;
+    // NonReentrant state variables
+    uint256 private constant _NOT_ENTERED = 1;
+    uint256 private constant _ENTERED = 2;
+    uint256 private _status = _NOT_ENTERED;
 
     modifier nonReentrant() {
-        require(!_entered, "ReentrancyGuard: reentrant call");
-        _entered = true;
+        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
+        _status = _ENTERED;
         _;
-        _entered = false;
-    }
-
-    modifier onEventSend() {
-        if (_eventSend) {
-            _;
-        }
+        _status = _NOT_ENTERED;
     }
 
     /// @dev necessary to receive ETH
@@ -108,21 +97,18 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
             requestedAmount
         );
 
-        // Delete if all assets withdrawn
         if (requestedWithdrawals[msg.sender].amount == 0) {
             delete requestedWithdrawals[msg.sender];
         }
 
         withheldLiquidity = withheldLiquidity.sub(requestedAmount);
+
         _burn(msg.sender, requestedAmount);
 
-        bytes32 eventSig = "Withdraw";
-        encodeAndSendData(eventSig, msg.sender);
-
-        if (asEth) { // Convert to eth
+        if (asEth) {
             weth.withdraw(requestedAmount);
             msg.sender.sendValue(requestedAmount);
-        } else { // Send as WETH
+        } else {
             IERC20(weth).safeTransfer(msg.sender, requestedAmount);
         }
     }
@@ -138,13 +124,11 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
             amount
         );
         requestedWithdrawals[msg.sender].amount = amount;
-        if (manager.getRolloverStatus()) {  // If manager is in the middle of a cycle rollover, add two cycles
+        if (manager.getRolloverStatus()) {
             requestedWithdrawals[msg.sender].minCycle = manager.getCurrentCycleIndex().add(2);
-        } else {  // If the manager is not in the middle of a rollover, add one cycle
+        } else {
             requestedWithdrawals[msg.sender].minCycle = manager.getCurrentCycleIndex().add(1);
         }
-
-        emit WithdrawalRequested(msg.sender, amount);
     }
 
     function preTransferAdjustWithheldLiquidity(address sender, uint256 amount) internal {
@@ -156,15 +140,15 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
 
             //subtract from global withheld liquidity (reduce) by removing the delta of (requestedAmount - newRequestedAmount)
             withheldLiquidity = withheldLiquidity.sub(
-                requestedWithdrawals[sender].amount.sub(newRequestedWithdrawl)
+                requestedWithdrawals[msg.sender].amount.sub(newRequestedWithdrawl)
             );
 
             //update the requested withdraw for user
-            requestedWithdrawals[sender].amount = newRequestedWithdrawl;
+            requestedWithdrawals[msg.sender].amount = newRequestedWithdrawl;
 
             //if the withdraw request is 0, empty it out
-            if (requestedWithdrawals[sender].amount == 0) {
-                delete requestedWithdrawals[sender];
+            if (requestedWithdrawals[msg.sender].amount == 0) {
+                delete requestedWithdrawals[msg.sender];
             }
         }
     }
@@ -181,15 +165,9 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
     }
 
     /// @dev Adjust withheldLiquidity and requestedWithdrawal if sender does not have sufficient unlocked balance for the transfer
-    function transfer(address recipient, uint256 amount) public override whenNotPaused nonReentrant returns (bool) {
+    function transfer(address recipient, uint256 amount) public override returns (bool) {
         preTransferAdjustWithheldLiquidity(msg.sender, amount);
-        (bool success) = super.transfer(recipient, amount);
-
-        bytes32 eventSig = "Transfer";
-        encodeAndSendData(eventSig, msg.sender);
-        encodeAndSendData(eventSig, recipient);
-
-        return success;
+        return super.transfer(recipient, amount);
     }
 
     /// @dev Adjust withheldLiquidity and requestedWithdrawal if sender does not have sufficient unlocked balance for the transfer
@@ -197,15 +175,9 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
         address sender,
         address recipient,
         uint256 amount
-    ) public override whenNotPaused nonReentrant returns (bool) {
+    ) public override returns (bool) {
         preTransferAdjustWithheldLiquidity(sender, amount);
-        (bool success) = super.transferFrom(sender, recipient, amount);
-
-        bytes32 eventSig = "Transfer";
-        encodeAndSendData(eventSig, sender);
-        encodeAndSendData(eventSig, recipient);
-
-        return success;
+        return super.transferFrom(sender, recipient, amount);
     }
 
     function pause() external override onlyOwner {
@@ -216,24 +188,6 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
         _unpause();
     }
 
-    function setDestinations(address _fxStateSender, address _destinationOnL2) external override onlyOwner {
-        require(_fxStateSender != address(0), "INVALID_ADDRESS");
-        require(_destinationOnL2 != address(0), "INVALID_ADDRESS");
-
-        destinations.fxStateSender = IFxStateSender(_fxStateSender);
-        destinations.destinationOnL2 = _destinationOnL2;
-
-        emit DestinationsSet(_fxStateSender, _destinationOnL2);
-    }
-
-    function setEventSend(bool _eventSendSet) external override onlyOwner {
-        require(destinations.destinationOnL2 != address(0), "DESTINATIONS_NOT_SET");
-
-        _eventSend = _eventSendSet;
-
-        emit EventSendSet(_eventSendSet);
-    }
-
     function _deposit(
         address fromAccount,
         address toAccount,
@@ -242,31 +196,12 @@ contract EthPool is ILiquidityEthPool, Initializable, ERC20, Ownable, Pausable, 
     ) internal {
         require(amount > 0, "INVALID_AMOUNT");
         require(toAccount != address(0), "INVALID_ADDRESS");
-
         _mint(toAccount, amount);
-        if (msgValue > 0) { // If ether get weth
+        if (msgValue > 0) {
             require(msgValue == amount, "AMT_VALUE_MISMATCH");
             weth.deposit{value: amount}();
-        } else { // Else go ahead and transfer weth from account to pool
+        } else {
             IERC20(weth).safeTransferFrom(fromAccount, address(this), amount);
         }
-
-        bytes32 eventSig = "Deposit";
-        encodeAndSendData(eventSig, toAccount);
-    }
-
-    function encodeAndSendData(bytes32 _eventSig, address _user) private onEventSend {
-        require(address(destinations.fxStateSender) != address(0), "ADDRESS_NOT_SET");
-        require(destinations.destinationOnL2 != address(0), "ADDRESS_NOT_SET");
-
-        uint256 userBalance = balanceOf(_user);
-        bytes memory data = abi.encode(BalanceUpdateEvent({
-            eventSig: _eventSig,
-            account: _user, 
-            token: address(this), 
-            amount: userBalance
-        }));
-
-        destinations.fxStateSender.sendMessageToChild(destinations.destinationOnL2, data);
     }
 }

@@ -16,8 +16,6 @@ interface ILiquidityEthPool {
         uint256 amount;
     }
 
-    event WithdrawalRequested(address requestor, uint256 amount);
-
     /// @notice Transfers amount of underlying token from user to this pool and mints fToken to the msg.sender.
     /// @notice Depositor must have previously granted transfer approval to the pool via underlying token contract.
     /// @notice Liquidity deposited is deployed on the next cycle - unless a withdrawal request is submitted, in which case the liquidity will be withheld.
