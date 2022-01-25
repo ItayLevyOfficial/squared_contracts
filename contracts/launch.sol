@@ -13,7 +13,7 @@ import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
 import "./ILiquidityPool.sol";
-import "../interfaces/IDefiRound.sol";
+import "./IDefiRound.sol";
 import "../interfaces/IWETH.sol";
 
 contract DefiRound is IDefiRound, Ownable {
