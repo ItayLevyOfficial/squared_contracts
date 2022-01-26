@@ -12,7 +12,7 @@ describe('Greeter', function () {
     defiRound = await DefiRound.deploy(WETH, treasury, 1000)
     await defiRound.deployed()
   })
-  it('Should return the new greeting once it\'s changed', async function () {
+  // it('example test from docs', async function () {
     // await defiRound.deposit()
     // expect(await greeter.greet()).to.equal('Hello, world!')
     //
@@ -22,6 +22,6 @@ describe('Greeter', function () {
     // await setGreetingTx.wait()
     //
     // expect(await greeter.greet()).to.equal('Hola, mundo!')
-  })
+  // })
 })
 
