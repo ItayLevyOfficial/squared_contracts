@@ -12,6 +12,9 @@ describe('Greeter', function () {
     defiRound = await DefiRound.deploy(WETH, treasury, 1000)
     await defiRound.deployed()
   })
+  it('Should deposit funds successfully', () => {
+    defiRound.deposit()
+  })
   // it('example test from docs', async function () {
     // await defiRound.deposit()
     // expect(await greeter.greet()).to.equal('Hello, world!')
