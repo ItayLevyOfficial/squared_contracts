@@ -12,6 +12,11 @@ describe('Greeter', function () {
     defiRound = await DefiRound.deploy(WETH, treasury, 1000)
     await defiRound.deployed()
   })
+
+  it('Should add ETH to the supported tokens list', async () => {
+    // await defiRound.
+  })
+
   it('Should deposit funds successfully', async () => {
     const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
     await defiRound.deposit({token: WETH, amount: 200}, [])
