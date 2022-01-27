@@ -12,8 +12,9 @@ describe('Greeter', function () {
     defiRound = await DefiRound.deploy(WETH, treasury, 1000)
     await defiRound.deployed()
   })
-  it('Should deposit funds successfully', () => {
-    defiRound.deposit()
+  it('Should deposit funds successfully', async () => {
+    const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+    await defiRound.deposit({token: WETH, amount: 200}, [])
   })
   // it('example test from docs', async function () {
     // await defiRound.deposit()
