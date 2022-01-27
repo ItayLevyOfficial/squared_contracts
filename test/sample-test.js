@@ -14,6 +14,8 @@ describe('Greeter', function () {
   })
 
   it('Should add ETH to the supported tokens list', async () => {
+    const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
+    const wrappedEthereumTokenAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
     // await defiRound.
   })
 
