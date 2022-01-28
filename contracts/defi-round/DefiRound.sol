@@ -15,6 +15,7 @@ import "../interfaces/ILiquidityPool.sol";
 import "../interfaces/IDefiRound.sol";
 import "../interfaces/IWETH.sol";
 import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
+import "hardhat/console.sol";
 
 contract DefiRound is IDefiRound, Ownable {
     using SafeMath for uint256;
@@ -76,8 +77,10 @@ contract DefiRound is IDefiRound, Ownable {
         require(supportedTokens.contains(token), "UNSUPPORTED_TOKEN");
         require(tokenAmount > 0, "INVALID_AMOUNT");
 
+        console.log("before failing line");
         // Convert ETH to WETH if ETH is passed in, otherwise treat WETH as a regular ERC20
         if (token == WETH && msg.value > 0) {
+            console.log("after failing line");
             require(tokenAmount == msg.value, "INVALID_MSG_VALUE"); 
             IWETH(WETH).deposit{value: tokenAmount}();
         } else {
