@@ -12,7 +12,7 @@ const addWethToSupportedTokens = async() => {
       token: WETH,
       oracle: ethereumChainlinkAddress,
       genesis: genesisPoolAddress,
-      maxLimit: 500
+      maxLimit: ethers.utils.parseEther("100")
   }])
 }
 
@@ -30,8 +30,9 @@ describe('Take off contract', function () {
   })
 
   it('Should deposit funds successfully', async () => {
+    const amountToDeposit = ethers.utils.parseEther("0.5");
     await addWethToSupportedTokens()
-    await defiRound.deposit({token: WETH, amount: 50}, [], {value: ethers.utils.parseEther("0.5")})
+    await defiRound.deposit({token: WETH, amount: amountToDeposit}, [], {value: amountToDeposit})
   })
   // it('example test from docs', async function () {
   //   await defiRound.deposit()
