@@ -76,11 +76,9 @@ contract DefiRound is IDefiRound, Ownable {
         uint256 tokenAmount = data.amount;
         require(supportedTokens.contains(token), "UNSUPPORTED_TOKEN");
         require(tokenAmount > 0, "INVALID_AMOUNT");
-
-        console.log("before failing line");
+        
         // Convert ETH to WETH if ETH is passed in, otherwise treat WETH as a regular ERC20
         if (token == WETH && msg.value > 0) {
-            console.log("after failing line");
             require(tokenAmount == msg.value, "INVALID_MSG_VALUE"); 
             IWETH(WETH).deposit{value: tokenAmount}();
         } else {
