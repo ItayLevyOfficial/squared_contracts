@@ -31,7 +31,7 @@ describe('Take off contract', function () {
 
   it('Should deposit funds successfully', async () => {
     await addWethToSupportedTokens()
-    await defiRound.deposit({token: WETH, amount: 50}, [])
+    await defiRound.deposit({token: WETH, amount: 50}, [], {value: ethers.utils.parseEther("0.5")})
   })
   // it('example test from docs', async function () {
   //   await defiRound.deposit()
