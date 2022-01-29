@@ -20,7 +20,11 @@ module.exports = {
   solidity: "0.6.11",
   networks: {
     hardhat: {
-      allowUnlimitedContractSize: true
+      allowUnlimitedContractSize: true,
+      forking: {
+        url: "https://eth-mainnet.alchemyapi.io/v2/2wzUWNwC9bpWNB5tNUznTTL0yogzqamW",
+        blockNumber: 14101114
+      }
     }
   }
 };

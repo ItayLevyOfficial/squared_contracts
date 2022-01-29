@@ -21,6 +21,7 @@ describe('Take off contract', function () {
     const DefiRound = await ethers.getContractFactory('DefiRound')
     const treasuryWallet = ethers.Wallet.createRandom()
     const treasury = treasuryWallet.address
+    
     defiRound = await DefiRound.deploy(WETH, treasury, 1000)
     await defiRound.deployed()
   })
