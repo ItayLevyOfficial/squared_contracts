@@ -83,11 +83,25 @@ describe('Deposit function', function () {
     const [owner] = await ethers.getSigners()
     const proof = tree.getProof(owner.address)
     await addWethToSupportedTokens()
-    
+
     await expect(
       defiRound.deposit({ token: WETH, amount: amountToDeposit }, proof, {
         value: amountToDeposit,
       }),
     ).to.be.revertedWith('PROOF_INVALID')
+  })
+
+  it('Should deposit funds successfully from a whitelisted address', async () => {
+    const amountToDeposit = ethers.utils.parseEther('0.5')
+    const address1 = ethers.Wallet.createRandom().address
+    const [owner] = await ethers.getSigners()
+    const enabledUsers = [owner.address, address1]
+    const tree = await configureWhiteList(enabledUsers)
+    const proof = tree.getProof(SHA256(owner.address)).map(obj => obj.data)
+    console.log({proof})
+    await addWethToSupportedTokens()
+    await defiRound.deposit({ token: WETH, amount: amountToDeposit }, proof, {
+      value: amountToDeposit,
+    })
   })
 })
