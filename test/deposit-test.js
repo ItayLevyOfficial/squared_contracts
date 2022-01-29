@@ -20,6 +20,14 @@ const addWethToSupportedTokens = async () => {
   ])
 }
 
+const configureWhiteList = async (allowedUsers) => {
+  const enabledUsersHashes = allowedUsers.map((user) => SHA256(user))
+  const tree = new MerkleTree(enabledUsersHashes, SHA256)
+  const root = tree.getRoot()
+  await defiRound.configureWhitelist({ enabled: true, root })
+  return tree
+}
+
 describe('Deposit function', function () {
   beforeEach(async () => {
     const DefiRound = await ethers.getContractFactory('DefiRound')
@@ -60,13 +68,26 @@ describe('Deposit function', function () {
   })
 
   it('Enables the whitelist settings successfully', async () => {
-    const [owner] = (await ethers.getSigners())
+    const [owner] = await ethers.getSigners()
     const address1 = ethers.Wallet.createRandom().address
     const address2 = ethers.Wallet.createRandom().address
     const enabledUsers = [owner.address, address1, address2]
-    const enabledUsersHashes = enabledUsers.map(user => SHA256(user))
-    const tree = new MerkleTree(enabledUsersHashes, SHA256)
-    const root = tree.getRoot()
-    await defiRound.configureWhitelist({enabled: true, root})
+    await configureWhiteList(enabledUsers)
+  })
+
+  it('Fail to deposit funds with a non whitelisted user', async () => {
+    const amountToDeposit = ethers.utils.parseEther('0.5')
+    const address1 = ethers.Wallet.createRandom().address
+    const enabledUsers = [address1]
+    const tree = await configureWhiteList(enabledUsers)
+    const [owner] = await ethers.getSigners()
+    const proof = tree.getProof(owner.address)
+    await addWethToSupportedTokens()
+    
+    await expect(
+      defiRound.deposit({ token: WETH, amount: amountToDeposit }, proof, {
+        value: amountToDeposit,
+      }),
+    ).to.be.revertedWith('PROOF_INVALID')
   })
 })
