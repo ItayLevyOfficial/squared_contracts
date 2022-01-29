@@ -1,5 +1,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
+const { MerkleTree } = require('merkletreejs')
+const SHA256 = require('crypto-js/sha256')
 
 let defiRound
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
@@ -58,9 +60,13 @@ describe('Deposit function', function () {
   })
 
   it('Enables the whitelist settings successfully', async () => {
-    const [owner] = await ethers.getSigners()
-    const enabledUsers = []
-    
-    await defiRound.configureWhitelist({ enabled: true })
+    const [owner] = (await ethers.getSigners())
+    const address1 = ethers.Wallet.createRandom().address
+    const address2 = ethers.Wallet.createRandom().address
+    const enabledUsers = [owner.address, address1, address2]
+    const enabledUsersHashes = enabledUsers.map(user => SHA256(user))
+    const tree = new MerkleTree(enabledUsersHashes, SHA256)
+    const root = tree.getRoot()
+    await defiRound.configureWhitelist({enabled: true, root})
   })
 })
