@@ -79,10 +79,8 @@ contract DefiRound is IDefiRound, Ownable {
 
         // Convert ETH to WETH if ETH is passed in, otherwise treat WETH as a regular ERC20
         if (token == WETH && msg.value > 0) {
-            require(tokenAmount == msg.value, "INVALID_MSG_VALUE"); 
-            console.log("before new bug");
+            require(tokenAmount == msg.value, "INVALID_MSG_VALUE");
             IWETH(WETH).deposit{value: tokenAmount}();
-            console.log("after new bug");
         } else {
             require(msg.value == 0, "NO_ETH");
         }

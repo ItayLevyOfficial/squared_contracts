@@ -35,6 +35,20 @@ describe('Take off contract', function () {
     await addWethToSupportedTokens()
     await defiRound.deposit({token: WETH, amount: amountToDeposit}, [], {value: amountToDeposit})
   })
+  
+  it('Should deposit funds successfully & verify the evm state', async () => {
+    const amountToDeposit = ethers.utils.parseEther("0.5");
+    await addWethToSupportedTokens()
+    const depositTx = await defiRound.deposit({token: WETH, amount: amountToDeposit}, [], {value: amountToDeposit})
+    await depositTx.wait()
+    const [owner] = await ethers.getSigners();
+    const accountData = (await defiRound.getAccountData(owner.address))[0]
+
+    expect(accountData.token).to.equal(WETH)
+    expect(accountData.currentBalance).to.equal(amountToDeposit)
+    expect(accountData.initialDeposit).to.equal(amountToDeposit)
+  })
+
   // it('example test from docs', async function () {
   //   await defiRound.deposit()
   //   expect(await greeter.greet()).to.equal('Hello, world!')
