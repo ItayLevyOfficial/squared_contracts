@@ -6,6 +6,12 @@ const SHA256 = require('crypto-js/sha256')
 let defiRound
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 
+function toHexString(byteArray) {
+  return Array.from(byteArray, function (byte) {
+    return ('0' + (byte & 0xff).toString(16)).slice(-2)
+  }).join('')
+}
+
 const addWethToSupportedTokens = async () => {
   const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
   const genesisPoolAddress = '0x5450D2d0CFdF107c0698B52596f3488cF88B0252'
@@ -97,11 +103,16 @@ describe('Deposit function', function () {
     const [owner] = await ethers.getSigners()
     const enabledUsers = [owner.address, address1]
     const tree = await configureWhiteList(enabledUsers)
-    const proof = tree.getProof(SHA256(owner.address)).map(obj => obj.data)
-    console.log({proof})
+    const proofObj = tree
+      .getProof(SHA256(owner.address))
+      .map((obj) => obj.data)[0]
+
     await addWethToSupportedTokens()
-    await defiRound.deposit({ token: WETH, amount: amountToDeposit }, proof, {
-      value: amountToDeposit,
-    })
+    await defiRound.deposit(
+      { token: WETH, amount: amountToDeposit}, [proofObj],
+      {
+        value: amountToDeposit,
+      },
+    )
   })
 })
