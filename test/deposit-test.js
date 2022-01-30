@@ -74,8 +74,13 @@ describe('Deposit function', function () {
     const address1 = ethers.Wallet.createRandom().address
     const address2 = ethers.Wallet.createRandom().address
     const enabledUsers = [owner.address, address1, address2]
-    await configureWhiteList(enabledUsers)
-
+    const tree = await configureWhiteList(enabledUsers)
+    const whitelistSettings = await defiRound.whitelistSettings()
+    const root = whitelistSettings.root
+    const isEnabled = whitelistSettings.enabled
+    
+    expect(isEnabled).to.equal(true)
+    expect(root).to.equal('0x' + tree.getRoot().toString('hex'))
   })
 
   it('Fail to deposit funds with a non whitelisted user', async () => {
@@ -107,12 +112,12 @@ describe('Deposit function', function () {
       .getProof(keccak256(owner.address))
       .map((obj) => obj.data)
 
-    await addWethToSupportedTokens()
-    await defiRound.deposit(
-      { token: WETH, amount: amountToDeposit}, proofObj,
-      {
-        value: amountToDeposit,
-      },
-    )
+    // await addWethToSupportedTokens()
+    // await defiRound.deposit(
+    //   { token: WETH, amount: amountToDeposit}, proofObj,
+    //   {
+    //     value: amountToDeposit,
+    //   },
+    // )
   })
 })
