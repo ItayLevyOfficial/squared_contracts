@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { MerkleTree } = require('merkletreejs')
-const SHA256 = require('crypto-js/sha256')
+const keccak256 = require('keccak256')
 
 let defiRound
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
@@ -16,7 +16,7 @@ const addWethToSupportedTokens = async () => {
   const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
   const genesisPoolAddress = '0x5450D2d0CFdF107c0698B52596f3488cF88B0252'
 
-  await defiRound.addSupportedTokens([
+  const tx = await defiRound.addSupportedTokens([
     {
       token: WETH,
       oracle: ethereumChainlinkAddress,
@@ -24,13 +24,15 @@ const addWethToSupportedTokens = async () => {
       maxLimit: ethers.utils.parseEther('100'),
     },
   ])
+  await tx.wait()
 }
 
 const configureWhiteList = async (allowedUsers) => {
-  const enabledUsersHashes = allowedUsers.map((user) => SHA256(user))
-  const tree = new MerkleTree(enabledUsersHashes, SHA256)
+  const enabledUsersHashes = allowedUsers.map((user) => keccak256(user))
+  const tree = new MerkleTree(enabledUsersHashes, keccak256)
   const root = tree.getRoot()
-  await defiRound.configureWhitelist({ enabled: true, root })
+  const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
+  await tx.wait()
   return tree
 }
 
@@ -79,6 +81,7 @@ describe('Deposit function', function () {
     const address2 = ethers.Wallet.createRandom().address
     const enabledUsers = [owner.address, address1, address2]
     await configureWhiteList(enabledUsers)
+
   })
 
   it('Fail to deposit funds with a non whitelisted user', async () => {
@@ -100,16 +103,19 @@ describe('Deposit function', function () {
   it('Should deposit funds successfully from a whitelisted address', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
     const address1 = ethers.Wallet.createRandom().address
+    const address2 = ethers.Wallet.createRandom().address
+    const address3 = ethers.Wallet.createRandom().address
     const [owner] = await ethers.getSigners()
-    const enabledUsers = [owner.address, address1]
+    const currentAddress = owner.address
+    const enabledUsers = [currentAddress, address1]
     const tree = await configureWhiteList(enabledUsers)
     const proofObj = tree
-      .getProof(SHA256(owner.address))
-      .map((obj) => obj.data)[0]
+      .getProof(keccak256(owner.address))
+      .map((obj) => obj.data)
 
     await addWethToSupportedTokens()
     await defiRound.deposit(
-      { token: WETH, amount: amountToDeposit}, [proofObj],
+      { token: WETH, amount: amountToDeposit}, proofObj,
       {
         value: amountToDeposit,
       },
