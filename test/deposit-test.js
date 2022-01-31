@@ -11,7 +11,7 @@ const addWethToSupportedTokens = async () => {
   const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
   const genesisPoolAddress = '0x5450D2d0CFdF107c0698B52596f3488cF88B0252'
 
-  const tx = await defiRound.addSupportedTokens([
+  await defiRound.addSupportedTokens([
     {
       token: WETH,
       oracle: ethereumChainlinkAddress,
@@ -19,7 +19,6 @@ const addWethToSupportedTokens = async () => {
       maxLimit: ethers.utils.parseEther('100'),
     },
   ])
-  await tx.wait()
 }
 
 const configureWhiteList = async (allowedUsers) => {
@@ -37,7 +36,7 @@ describe('Deposit function', function () {
     const treasuryWallet = ethers.Wallet.createRandom()
     const treasury = treasuryWallet.address
 
-    defiRound = await DefiRound.deploy(WETH, treasury, 1000)
+    defiRound = await DefiRound.deploy(WETH, treasury, 100_000000000000)
     await defiRound.deployed()
   })
 
@@ -124,5 +123,31 @@ describe('Deposit function', function () {
     expect(accountData.token).to.equal(WETH)
     expect(accountData.currentBalance).to.equal(amountToDeposit)
     expect(accountData.initialDeposit).to.equal(amountToDeposit)
+  })
+
+  it('Should verify the contract state after two deposits', async ()=> {
+    const depositFunds = async (amountToDeposit) => {
+      await defiRound.deposit(
+        { token: WETH, amount: amountToDeposit },
+        [],
+        { value: amountToDeposit }
+      )
+    }
+    const amountToDeposit = ethers.utils.parseEther('0.000005')
+    const [owner] = await ethers.getSigners()
+    await addWethToSupportedTokens()
+    await depositFunds(amountToDeposit)
+    let accountData = (await defiRound.getAccountData(owner.address))[0]
+
+    expect(accountData.token).to.equal(WETH)
+    expect(accountData.currentBalance).to.equal(amountToDeposit)
+    expect(accountData.initialDeposit).to.equal(amountToDeposit)
+
+    await depositFunds(amountToDeposit)
+    accountData = (await defiRound.getAccountData(owner.address))[0]
+
+    expect(accountData.token).to.equal(WETH)
+    expect(accountData.currentBalance).to.equal(amountToDeposit * 2)
+    expect(accountData.initialDeposit).to.equal(amountToDeposit * 2)
   })
 })
