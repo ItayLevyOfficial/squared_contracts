@@ -119,5 +119,10 @@ describe('Deposit function', function () {
         value: amountToDeposit,
       },
     )
+    const accountData = (await defiRound.getAccountData(owner.address))[0]
+
+    expect(accountData.token).to.equal(WETH)
+    expect(accountData.currentBalance).to.equal(amountToDeposit)
+    expect(accountData.initialDeposit).to.equal(amountToDeposit)
   })
 })
