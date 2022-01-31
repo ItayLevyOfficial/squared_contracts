@@ -1,7 +1,8 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { MerkleTree } = require('merkletreejs')
-const keccak256 = require('keccak256')
+const { MerkleTree } = require ('merkletreejs')
+
+const hashAddress = (address) => Buffer.from(ethers.utils.solidityKeccak256(['address'], [address]).slice(2), 'hex')
 
 let defiRound
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
@@ -22,8 +23,8 @@ const addWethToSupportedTokens = async () => {
 }
 
 const configureWhiteList = async (allowedUsers) => {
-  const enabledUsersHashes = allowedUsers.map((user) => keccak256(user))
-  const tree = new MerkleTree(enabledUsersHashes, keccak256)
+  const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
+  const tree = new MerkleTree(enabledUsersHashes, hashAddress)
   const root = tree.getRoot()
   const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
   await tx.wait()
@@ -78,7 +79,7 @@ describe('Deposit function', function () {
     const whitelistSettings = await defiRound.whitelistSettings()
     const root = whitelistSettings.root
     const isEnabled = whitelistSettings.enabled
-    
+
     expect(isEnabled).to.equal(true)
     expect(root).to.equal('0x' + tree.getRoot().toString('hex'))
   })
@@ -109,15 +110,16 @@ describe('Deposit function', function () {
     const enabledUsers = [currentAddress, address1]
     const tree = await configureWhiteList(enabledUsers)
     const proofObj = tree
-      .getProof(keccak256(owner.address))
-      .map((obj) => obj.data)
+      .getProof(hashAddress(owner.address))
+      .map((obj) =>  obj.data)
 
-    // await addWethToSupportedTokens()
-    // await defiRound.deposit(
-    //   { token: WETH, amount: amountToDeposit}, proofObj,
-    //   {
-    //     value: amountToDeposit,
-    //   },
-    // )
+    await addWethToSupportedTokens()
+    console.log({proofObj});
+    await defiRound.deposit(
+      { token: WETH, amount: amountToDeposit}, proofObj,
+      {
+        value: amountToDeposit,
+      },
+    )
   })
 })
