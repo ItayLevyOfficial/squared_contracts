@@ -23,7 +23,7 @@ const addWethToSupportedTokens = async () => {
 }
 
 const configureWhiteList = async (allowedUsers) => {
-  const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
+  const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user)).sort()
   const tree = new MerkleTree(enabledUsersHashes, hashAddress)
   const root = tree.getRoot()
   const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
@@ -111,10 +111,9 @@ describe('Deposit function', function () {
     const tree = await configureWhiteList(enabledUsers)
     const proofObj = tree
       .getProof(hashAddress(owner.address))
-      .map((obj) =>  obj.data)
+      .map(pr => pr.data)
 
     await addWethToSupportedTokens()
-    console.log({proofObj});
     await defiRound.deposit(
       { token: WETH, amount: amountToDeposit}, proofObj,
       {
