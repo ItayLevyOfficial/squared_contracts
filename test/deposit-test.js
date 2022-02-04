@@ -3,9 +3,10 @@ const { ethers } = require('hardhat')
 const { MerkleTree } = require ('merkletreejs')
 
 const hashAddress = (address) => Buffer.from(ethers.utils.solidityKeccak256(['address'], [address]).slice(2), 'hex')
-
 let defiRound
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
+const ethPrice = 2599_46882140
+const maxTotalValue = ethPrice * 10
 
 const addWethToSupportedTokens = async () => {
   const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
@@ -36,7 +37,7 @@ describe('Deposit function', function () {
     const treasuryWallet = ethers.Wallet.createRandom()
     const treasury = treasuryWallet.address
 
-    defiRound = await DefiRound.deploy(WETH, treasury, 100_000000000000)
+    defiRound = await DefiRound.deploy(WETH, treasury, maxTotalValue)
     await defiRound.deployed()
   })
 
@@ -149,5 +150,14 @@ describe('Deposit function', function () {
     expect(accountData.token).to.equal(WETH)
     expect(accountData.currentBalance).to.equal(amountToDeposit * 2)
     expect(accountData.initialDeposit).to.equal(amountToDeposit * 2)
+  })
+
+  it('Should reach the maxTotalValue great', async () => {
+    const amountToDeposit = ethers.utils.parseEther('9.9')
+    await addWethToSupportedTokens()
+    await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
+      value: amountToDeposit,
+    })
+    
   })
 })
