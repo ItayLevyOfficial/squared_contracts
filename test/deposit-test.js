@@ -1,8 +1,12 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { MerkleTree } = require ('merkletreejs')
+const { MerkleTree } = require('merkletreejs')
 
-const hashAddress = (address) => Buffer.from(ethers.utils.solidityKeccak256(['address'], [address]).slice(2), 'hex')
+const hashAddress = (address) =>
+  Buffer.from(
+    ethers.utils.solidityKeccak256(['address'], [address]).slice(2),
+    'hex',
+  )
 let defiRound
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 const ethPrice = 2599_46882140
@@ -24,7 +28,7 @@ const addWethToSupportedTokens = async () => {
 
 const configureWhiteList = async (allowedUsers) => {
   const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
-  const tree = new MerkleTree(enabledUsersHashes, hashAddress, {sort: true})
+  const tree = new MerkleTree(enabledUsersHashes, hashAddress, { sort: true })
   const root = tree.getRoot()
   const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
   await tx.wait()
@@ -111,10 +115,11 @@ describe('Deposit function', function () {
     const tree = await configureWhiteList(enabledUsers)
     const proofObj = tree
       .getProof(hashAddress(owner.address))
-      .map(pr => pr.data)
+      .map((pr) => pr.data)
     await addWethToSupportedTokens()
     await defiRound.deposit(
-      { token: WETH, amount: amountToDeposit}, proofObj,
+      { token: WETH, amount: amountToDeposit },
+      proofObj,
       {
         value: amountToDeposit,
       },
@@ -126,13 +131,11 @@ describe('Deposit function', function () {
     expect(accountData.initialDeposit).to.equal(amountToDeposit)
   })
 
-  it('Should verify the contract state after two deposits', async ()=> {
+  it('Should verify the contract state after two deposits', async () => {
     const depositFunds = async (amountToDeposit) => {
-      await defiRound.deposit(
-        { token: WETH, amount: amountToDeposit },
-        [],
-        { value: amountToDeposit }
-      )
+      await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
+        value: amountToDeposit,
+      })
     }
     const amountToDeposit = ethers.utils.parseEther('0.000005')
     const [owner] = await ethers.getSigners()
@@ -153,11 +156,16 @@ describe('Deposit function', function () {
   })
 
   it('Should reach the maxTotalValue great', async () => {
-    const amountToDeposit = ethers.utils.parseEther('9.9')
+    const amountToDeposit = ethers.utils.parseEther('10.1')
     await addWethToSupportedTokens()
     await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
       value: amountToDeposit,
     })
-    
+    const secondAmountToDeposit = ethers.utils.parseEther('0.1')
+    await expect(
+      defiRound.deposit({ token: WETH, amount: secondAmountToDeposit }, [], {
+        value: secondAmountToDeposit,
+      }),
+    ).to.be.revertedWith('DEPOSITS_LOCKED')
   })
 })
