@@ -1,5 +1,6 @@
 {
     "solidity.compileUsingRemoteVersion": "v0.6.11+commit.5ef660b1",
     "solidity.enabledAsYouTypeCompilationErrorCheck": true,
-    "breadcrumbs.enabled": true
+    "breadcrumbs.enabled": true,
+    "editor.tabSize": 2
 }
