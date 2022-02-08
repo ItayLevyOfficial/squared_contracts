@@ -43,5 +43,5 @@ module.exports = {
   ethPrice,
   maxTotalValue,
   deployLaunchContract,
-  addWethToSupportedTokens,
+  addWethToSupportedTokens,addUsdcToSupportedTokens
 }

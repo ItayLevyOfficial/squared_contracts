@@ -1,5 +1,5 @@
 const { ethers } = require('hardhat')
-const { addWethToSupportedTokens, deployLaunchContract } = require('./utils')
+const { addWethToSupportedTokens, deployLaunchContract, addUsdcToSupportedTokens } = require('./utils')
 
 let defiRound
 
