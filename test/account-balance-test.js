@@ -1,5 +1,5 @@
 const { ethers } = require('hardhat')
-const { deployLaunchContract } = require('./utils')
+const { addWethToSupportedTokens, deployLaunchContract } = require('./utils')
 
 let defiRound
 
@@ -9,12 +9,11 @@ describe('Get account balance', () => {
   })
 
   it('Should fetch account balance great', async () => {
+    await addWethToSupportedTokens(defiRound)
     const address = ethers.Wallet.createRandom().address
     const accountData = await defiRound.getAccountData(address)
-    console.log({accountData});
+    console.log({ accountData })
   })
 
-  it('Should fetch the account balance great with two supported tokens', async () => {
-    
-  })
+  it('Should fetch the account balance great with two supported tokens', async () => {})
 })
