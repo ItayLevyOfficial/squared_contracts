@@ -13,4 +13,8 @@ describe('Get account balance', () => {
     const accountData = await defiRound.getAccountData(address)
     console.log({accountData});
   })
+
+  it('Should fetch the account balance great with two supported tokens', async () => {
+    
+  })
 })

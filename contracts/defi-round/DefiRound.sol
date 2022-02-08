@@ -306,7 +306,7 @@ contract DefiRound is IDefiRound, Ownable {
                 data[i] = details;
             } else {
                 data[i] = AccountDataDetails(token, accountTokenInfo.initialDeposit, accountTokenInfo.currentBalance, 0, 0, 0);
-            }          
+            }
         }
     }
 

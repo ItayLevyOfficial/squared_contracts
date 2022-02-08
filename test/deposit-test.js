@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { MerkleTree } = require('merkletreejs')
-const { WETH, deployLaunchContract } = require('./utils')
+const { WETH, deployLaunchContract, addWethToSupportedTokens } = require('./utils')
 
 const hashAddress = (address) =>
   Buffer.from(
@@ -9,20 +9,6 @@ const hashAddress = (address) =>
     'hex',
   )
 let defiRound
-
-const addWethToSupportedTokens = async () => {
-  const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
-  const genesisPoolAddress = '0x5450D2d0CFdF107c0698B52596f3488cF88B0252'
-
-  await defiRound.addSupportedTokens([
-    {
-      token: WETH,
-      oracle: ethereumChainlinkAddress,
-      genesis: genesisPoolAddress,
-      maxLimit: ethers.utils.parseEther('100'),
-    },
-  ])
-}
 
 const configureWhiteList = async (allowedUsers) => {
   const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
@@ -39,12 +25,12 @@ describe('Deposit function', function () {
   })
 
   it('Should add ETH to the supported tokens list', async () => {
-    await addWethToSupportedTokens()
+    await addWethToSupportedTokens(defiRound)
   })
 
   it('Should deposit funds successfully', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
-    await addWethToSupportedTokens()
+    await addWethToSupportedTokens(defiRound)
     await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
       value: amountToDeposit,
     })
@@ -52,7 +38,7 @@ describe('Deposit function', function () {
 
   it('Should deposit funds successfully & verify the evm state', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
-    await addWethToSupportedTokens()
+    await addWethToSupportedTokens(defiRound)
     const depositTx = await defiRound.deposit(
       { token: WETH, amount: amountToDeposit },
       [],
@@ -88,7 +74,7 @@ describe('Deposit function', function () {
     const tree = await configureWhiteList(enabledUsers)
     const [owner] = await ethers.getSigners()
     const proof = tree.getProof(owner.address)
-    await addWethToSupportedTokens()
+    await addWethToSupportedTokens(defiRound)
 
     await expect(
       defiRound.deposit({ token: WETH, amount: amountToDeposit }, proof, {
@@ -109,7 +95,7 @@ describe('Deposit function', function () {
     const proofObj = tree
       .getProof(hashAddress(owner.address))
       .map((pr) => pr.data)
-    await addWethToSupportedTokens()
+    await addWethToSupportedTokens(defiRound)
     await defiRound.deposit(
       { token: WETH, amount: amountToDeposit },
       proofObj,
@@ -132,7 +118,7 @@ describe('Deposit function', function () {
     }
     const amountToDeposit = ethers.utils.parseEther('0.000005')
     const [owner] = await ethers.getSigners()
-    await addWethToSupportedTokens()
+    await addWethToSupportedTokens(defiRound)
     await depositFunds(amountToDeposit)
     let accountData = (await defiRound.getAccountData(owner.address))[0]
 
@@ -150,7 +136,7 @@ describe('Deposit function', function () {
 
   it('Should reach the maxTotalValue great', async () => {
     const amountToDeposit = ethers.utils.parseEther('10.1')
-    await addWethToSupportedTokens()
+    await addWethToSupportedTokens(defiRound)
     await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
       value: amountToDeposit,
     })
