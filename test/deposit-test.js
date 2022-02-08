@@ -1,6 +1,7 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { MerkleTree } = require('merkletreejs')
+const { WETH, deployLaunchContract } = require('./utils')
 
 const hashAddress = (address) =>
   Buffer.from(
@@ -32,16 +33,10 @@ const configureWhiteList = async (allowedUsers) => {
   return tree
 }
 
-const deployLaunchContract = async () => {
-  const DefiRound = await ethers.getContractFactory('DefiRound')
-  const treasuryWallet = ethers.Wallet.createRandom()
-  const treasury = treasuryWallet.address
-  defiRound = await DefiRound.deploy(WETH, treasury, maxTotalValue)
-  await defiRound.deployed()
-}
-
 describe('Deposit function', function () {
-  beforeEach(deployLaunchContract)
+  beforeEach(async () => {
+    defiRound = await deployLaunchContract()
+  })
 
   it('Should add ETH to the supported tokens list', async () => {
     await addWethToSupportedTokens()
