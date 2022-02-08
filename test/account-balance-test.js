@@ -1,19 +1,16 @@
-let defiRound
+const { ethers } = require('hardhat')
+const { deployLaunchContract } = require('./utils')
 
-const deployLaunchContract = async () => {
-  const DefiRound = await ethers.getContractFactory('DefiRound')
-  const treasuryWallet = ethers.Wallet.createRandom()
-  const treasury = treasuryWallet.address
-  defiRound = await DefiRound.deploy(WETH, treasury, maxTotalValue)
-  await defiRound.deployed()
-}
+let defiRound
 
 describe('Get account balance', () => {
   beforeEach(async () => {
-    defiRound = await deployLaunchContract
+    defiRound = await deployLaunchContract()
   })
 
-  it('Should run', () => {
-
+  it('Should fetch account balance great', async () => {
+    const address = ethers.Wallet.createRandom().address
+    const accountData = await defiRound.getAccountData(address)
+    console.log({accountData});
   })
 })
