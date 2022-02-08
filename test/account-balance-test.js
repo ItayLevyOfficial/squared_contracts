@@ -10,10 +10,10 @@ const deployLaunchContract = async () => {
 
 describe('Get account balance', () => {
   beforeEach(async () => {
-    await deployLaunchContract
+    defiRound = await deployLaunchContract
   })
 
-  it ('Should run', () => {
-    console.log('aaaa');
+  it('Should run', () => {
+
   })
 })
