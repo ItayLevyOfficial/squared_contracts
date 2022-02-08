@@ -35,6 +35,15 @@ const configureWhiteList = async (allowedUsers) => {
   return tree
 }
 
+export const deployLaunchContract = async () => {
+  const DefiRound = await ethers.getContractFactory('DefiRound')
+  const treasuryWallet = ethers.Wallet.createRandom()
+  const treasury = treasuryWallet.address
+
+  defiRound = await DefiRound.deploy(WETH, treasury, maxTotalValue)
+  await defiRound.deployed()
+}
+
 describe('Deposit function', function () {
   beforeEach(async () => {
     const DefiRound = await ethers.getContractFactory('DefiRound')
