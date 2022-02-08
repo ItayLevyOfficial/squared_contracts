@@ -39,20 +39,12 @@ const deployLaunchContract = async () => {
   const DefiRound = await ethers.getContractFactory('DefiRound')
   const treasuryWallet = ethers.Wallet.createRandom()
   const treasury = treasuryWallet.address
-
   defiRound = await DefiRound.deploy(WETH, treasury, maxTotalValue)
   await defiRound.deployed()
 }
 
 describe('Deposit function', function () {
-  beforeEach(async () => {
-    const DefiRound = await ethers.getContractFactory('DefiRound')
-    const treasuryWallet = ethers.Wallet.createRandom()
-    const treasury = treasuryWallet.address
-
-    defiRound = await DefiRound.deploy(WETH, treasury, maxTotalValue)
-    await defiRound.deployed()
-  })
+  beforeEach(deployLaunchContract)
 
   it('Should add ETH to the supported tokens list', async () => {
     await addWethToSupportedTokens()
@@ -178,3 +170,5 @@ describe('Deposit function', function () {
     ).to.be.revertedWith('DEPOSITS_LOCKED')
   })
 })
+
+module.exports = { deployLaunchContract, defiRound }
