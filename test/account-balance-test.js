@@ -10,6 +10,7 @@ describe('Get account balance', () => {
 
   it('Should fetch account balance great', async () => {
     await addWethToSupportedTokens(defiRound)
+    await addUsdcToSupportedTokens(defiRound)
     const address = ethers.Wallet.createRandom().address
     const accountData = await defiRound.getAccountData(address)
     console.log({ accountData })
