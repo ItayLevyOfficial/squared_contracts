@@ -181,7 +181,7 @@ contract DefiRound is IDefiRound, Ownable {
             require(data.denominator > 0, "INVALID_DENOMINATOR");
             require(tokenRates[data.token].token == address(0), "RATE_ALREADY_SET");
             require(configuredTokenRates.add(data.token), "ALREADY_CONFIGURED");
-            tokenRates[data.token] = data;
+            tokenRates[data.token] = data;            
         }
 
         require(configuredTokenRates.length() == supportedTokens.length(), "MISSING_RATE");
