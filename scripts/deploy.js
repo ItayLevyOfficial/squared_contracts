@@ -1,4 +1,4 @@
-const { ethers } = require('hardhat')
+const { ethers, network } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 const { supportNativeToken, supportStableToken } = require('../test/utils')
 
@@ -14,6 +14,11 @@ const main = async () => {
   console.table({ contractAddress })
   await supportNativeToken(defiRound)
   await supportStableToken(defiRound)
+  const myMetamaskWalletAddress = '0xA3318B6027DC8fC382F990Bee9d2308E2ea3a388'
+  await network.provider.send("hardhat_setBalance", [
+    myMetamaskWalletAddress,
+    ethers.utils.parseEther('100')
+  ])
 }
 
 main()
