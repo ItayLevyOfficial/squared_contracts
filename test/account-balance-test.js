@@ -1,5 +1,10 @@
 const { ethers } = require('hardhat')
-const { addWethToSupportedTokens, deployLaunchContract, addUsdcToSupportedTokens, WETH } = require('./utils')
+const { selectedChain } = require('./chains')
+const {
+  deployLaunchContract,
+  supportNativeToken,
+  supportStableToken,
+} = require('./utils')
 
 let defiRound
 
@@ -9,18 +14,16 @@ describe('Get account balance', () => {
   })
 
   it('Should fetch account balance great', async () => {
-    await addWethToSupportedTokens(defiRound)
-    await addUsdcToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
+    await supportStableToken(defiRound)
     const amountToDeposit = ethers.utils.parseEther('0.5')
-    await defiRound.deposit(
-      { token: WETH, amount: amountToDeposit },
-      [],
-      { value: amountToDeposit },
-    )
-    
+    await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
+      value: amountToDeposit,
+    })
+
     const [owner] = await ethers.getSigners()
     const accountData = await defiRound.getAccountData(owner.address)
-    
+
     console.log({ accountData })
   })
 
