@@ -1,5 +1,5 @@
 const { ethers } = require('hardhat')
-const { selectedChain } = require('./tokens')
+const { selectedChain } = require('./chains')
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 const ethPrice = 2599_46882140
 const maxTotalValue = ethPrice * 10
