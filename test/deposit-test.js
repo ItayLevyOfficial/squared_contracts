@@ -2,7 +2,7 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { MerkleTree } = require('merkletreejs')
 const { selectedChain } = require('./chains')
-const { deployLaunchContract, addWethToSupportedTokens } = require('./utils')
+const { deployLaunchContract, supportNativeToken } = require('./utils')
 
 const hashAddress = (address) =>
   Buffer.from(
@@ -26,12 +26,12 @@ describe('Deposit function', function () {
   })
 
   it('Should add native token to the supported tokens list', async () => {
-    await addWethToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
   })
 
   it('Should deposit funds successfully', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
-    await addWethToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
     await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
       value: amountToDeposit,
     })
@@ -39,7 +39,7 @@ describe('Deposit function', function () {
 
   it('Should deposit funds successfully & verify the evm state', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
-    await addWethToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
     const depositTx = await defiRound.deposit(
       { token: selectedChain.nativeToken.address, amount: amountToDeposit },
       [],
@@ -75,7 +75,7 @@ describe('Deposit function', function () {
     const tree = await configureWhiteList(enabledUsers)
     const [owner] = await ethers.getSigners()
     const proof = tree.getProof(owner.address)
-    await addWethToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
 
     await expect(
       defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, proof, {
@@ -94,7 +94,7 @@ describe('Deposit function', function () {
     const proofObj = tree
       .getProof(hashAddress(owner.address))
       .map((pr) => pr.data)
-    await addWethToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
     await defiRound.deposit(
       { token: selectedChain.nativeToken.address, amount: amountToDeposit },
       proofObj,
@@ -117,7 +117,7 @@ describe('Deposit function', function () {
     }
     const amountToDeposit = ethers.utils.parseEther('0.000005')
     const [owner] = await ethers.getSigners()
-    await addWethToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
     await depositFunds(amountToDeposit)
     let accountData = (await defiRound.getAccountData(owner.address))[0]
 
@@ -135,7 +135,7 @@ describe('Deposit function', function () {
 
   it('Should reach the maxTotalValue great', async () => {
     const amountToDeposit = ethers.utils.parseEther('10.1')
-    await addWethToSupportedTokens(defiRound)
+    await supportNativeToken(defiRound)
     await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
       value: amountToDeposit,
     })
