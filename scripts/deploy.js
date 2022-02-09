@@ -9,7 +9,7 @@ const main = async () => {
   // Need extra 8 zeros for the decimals.
   const maxTotalValue = 100_000_00000000
 
-  const defiRound = await DefiRound.deploy(selectedChain.nativeToken, treasury, maxTotalValue)
+  const defiRound = await DefiRound.deploy(selectedChain.nativeToken.address, treasury, maxTotalValue)
   const contractAddress = (await defiRound.deployed()).address
   console.table({ contractAddress })
   await supportNativeToken(defiRound)
