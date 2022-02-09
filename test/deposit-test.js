@@ -24,7 +24,7 @@ describe('Deposit function', function () {
     defiRound = await deployLaunchContract()
   })
 
-  it('Should add ETH to the supported tokens list', async () => {
+  it('Should add native token to the supported tokens list', async () => {
     await addWethToSupportedTokens(defiRound)
   })
 

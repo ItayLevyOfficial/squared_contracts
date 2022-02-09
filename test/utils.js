@@ -17,7 +17,7 @@ const addUsdcToSupportedTokens = async (defiRound) => {
   ])
 }
 
-const addWethToSupportedTokens = async (defiRound) => {
+const supportNativeToken = async (defiRound) => {
   const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
   const genesisPoolAddress = '0x5450D2d0CFdF107c0698B52596f3488cF88B0252'
 
@@ -43,5 +43,6 @@ module.exports = {
   ethPrice,
   maxTotalValue,
   deployLaunchContract,
-  addWethToSupportedTokens,addUsdcToSupportedTokens
+  addWethToSupportedTokens: supportNativeToken,
+  addUsdcToSupportedTokens,
 }
