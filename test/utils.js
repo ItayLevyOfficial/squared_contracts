@@ -1,4 +1,5 @@
 const { ethers } = require('hardhat')
+const { selectedChain } = require('./tokens')
 const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
 const ethPrice = 2599_46882140
 const maxTotalValue = ethPrice * 10
@@ -18,13 +19,13 @@ const addUsdcToSupportedTokens = async (defiRound) => {
 }
 
 const supportNativeToken = async (defiRound) => {
-  const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
-  const genesisPoolAddress = '0x5450D2d0CFdF107c0698B52596f3488cF88B0252'
+  const nativeToken = selectedChain.nativeToken
+  const genesisPoolAddress = ethers.Wallet.createRandom().address
 
   await defiRound.addSupportedTokens([
     {
-      token: WETH,
-      oracle: ethereumChainlinkAddress,
+      token: nativeToken.address,
+      oracle: nativeToken.chainlinkAddress,
       genesis: genesisPoolAddress,
       maxLimit: ethers.utils.parseEther('100'),
     },
@@ -43,6 +44,5 @@ module.exports = {
   ethPrice,
   maxTotalValue,
   deployLaunchContract,
-  addWethToSupportedTokens: supportNativeToken,
-  addUsdcToSupportedTokens,
+  supportNativeToken,addUsdcToSupportedTokens
 }
