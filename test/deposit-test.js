@@ -1,16 +1,14 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { MerkleTree } = require('merkletreejs')
-const SHA256 = require('crypto-js/sha256')
+const { WETH, deployLaunchContract } = require('./utils')
 
+const hashAddress = (address) =>
+  Buffer.from(
+    ethers.utils.solidityKeccak256(['address'], [address]).slice(2),
+    'hex',
+  )
 let defiRound
-const WETH = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2'
-
-function toHexString(byteArray) {
-  return Array.from(byteArray, function (byte) {
-    return ('0' + (byte & 0xff).toString(16)).slice(-2)
-  }).join('')
-}
 
 const addWethToSupportedTokens = async () => {
   const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
@@ -27,21 +25,17 @@ const addWethToSupportedTokens = async () => {
 }
 
 const configureWhiteList = async (allowedUsers) => {
-  const enabledUsersHashes = allowedUsers.map((user) => SHA256(user))
-  const tree = new MerkleTree(enabledUsersHashes, SHA256)
+  const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
+  const tree = new MerkleTree(enabledUsersHashes, hashAddress, { sort: true })
   const root = tree.getRoot()
-  await defiRound.configureWhitelist({ enabled: true, root })
+  const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
+  await tx.wait()
   return tree
 }
 
 describe('Deposit function', function () {
   beforeEach(async () => {
-    const DefiRound = await ethers.getContractFactory('DefiRound')
-    const treasuryWallet = ethers.Wallet.createRandom()
-    const treasury = treasuryWallet.address
-
-    defiRound = await DefiRound.deploy(WETH, treasury, 1000)
-    await defiRound.deployed()
+    defiRound = await deployLaunchContract()
   })
 
   it('Should add ETH to the supported tokens list', async () => {
@@ -78,7 +72,13 @@ describe('Deposit function', function () {
     const address1 = ethers.Wallet.createRandom().address
     const address2 = ethers.Wallet.createRandom().address
     const enabledUsers = [owner.address, address1, address2]
-    await configureWhiteList(enabledUsers)
+    const tree = await configureWhiteList(enabledUsers)
+    const whitelistSettings = await defiRound.whitelistSettings()
+    const root = whitelistSettings.root
+    const isEnabled = whitelistSettings.enabled
+
+    expect(isEnabled).to.equal(true)
+    expect(root).to.equal('0x' + tree.getRoot().toString('hex'))
   })
 
   it('Fail to deposit funds with a non whitelisted user', async () => {
@@ -100,19 +100,67 @@ describe('Deposit function', function () {
   it('Should deposit funds successfully from a whitelisted address', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
     const address1 = ethers.Wallet.createRandom().address
+    const address2 = ethers.Wallet.createRandom().address
+    const address3 = ethers.Wallet.createRandom().address
     const [owner] = await ethers.getSigners()
-    const enabledUsers = [owner.address, address1]
+    const currentAddress = owner.address
+    const enabledUsers = [currentAddress, address1]
     const tree = await configureWhiteList(enabledUsers)
     const proofObj = tree
-      .getProof(SHA256(owner.address))
-      .map((obj) => obj.data)[0]
-
+      .getProof(hashAddress(owner.address))
+      .map((pr) => pr.data)
     await addWethToSupportedTokens()
     await defiRound.deposit(
-      { token: WETH, amount: amountToDeposit}, [proofObj],
+      { token: WETH, amount: amountToDeposit },
+      proofObj,
       {
         value: amountToDeposit,
       },
     )
+    const accountData = (await defiRound.getAccountData(owner.address))[0]
+
+    expect(accountData.token).to.equal(WETH)
+    expect(accountData.currentBalance).to.equal(amountToDeposit)
+    expect(accountData.initialDeposit).to.equal(amountToDeposit)
+  })
+
+  it('Should verify the contract state after two deposits', async () => {
+    const depositFunds = async (amountToDeposit) => {
+      await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
+        value: amountToDeposit,
+      })
+    }
+    const amountToDeposit = ethers.utils.parseEther('0.000005')
+    const [owner] = await ethers.getSigners()
+    await addWethToSupportedTokens()
+    await depositFunds(amountToDeposit)
+    let accountData = (await defiRound.getAccountData(owner.address))[0]
+
+    expect(accountData.token).to.equal(WETH)
+    expect(accountData.currentBalance).to.equal(amountToDeposit)
+    expect(accountData.initialDeposit).to.equal(amountToDeposit)
+
+    await depositFunds(amountToDeposit)
+    accountData = (await defiRound.getAccountData(owner.address))[0]
+
+    expect(accountData.token).to.equal(WETH)
+    expect(accountData.currentBalance).to.equal(amountToDeposit * 2)
+    expect(accountData.initialDeposit).to.equal(amountToDeposit * 2)
+  })
+
+  it('Should reach the maxTotalValue great', async () => {
+    const amountToDeposit = ethers.utils.parseEther('10.1')
+    await addWethToSupportedTokens()
+    await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
+      value: amountToDeposit,
+    })
+    const secondAmountToDeposit = ethers.utils.parseEther('0.1')
+    await expect(
+      defiRound.deposit({ token: WETH, amount: secondAmountToDeposit }, [], {
+        value: secondAmountToDeposit,
+      }),
+    ).to.be.revertedWith('DEPOSITS_LOCKED')
   })
 })
+
+module.exports = { deployLaunchContract, defiRound }
