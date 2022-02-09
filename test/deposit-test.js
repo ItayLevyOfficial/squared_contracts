@@ -1,7 +1,8 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
 const { MerkleTree } = require('merkletreejs')
-const { WETH, deployLaunchContract } = require('./utils')
+const { selectedChain } = require('./chains')
+const { deployLaunchContract, supportNativeToken } = require('./utils')
 
 const hashAddress = (address) =>
   Buffer.from(
@@ -9,20 +10,6 @@ const hashAddress = (address) =>
     'hex',
   )
 let defiRound
-
-const addWethToSupportedTokens = async () => {
-  const ethereumChainlinkAddress = '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419'
-  const genesisPoolAddress = '0x5450D2d0CFdF107c0698B52596f3488cF88B0252'
-
-  await defiRound.addSupportedTokens([
-    {
-      token: WETH,
-      oracle: ethereumChainlinkAddress,
-      genesis: genesisPoolAddress,
-      maxLimit: ethers.utils.parseEther('100'),
-    },
-  ])
-}
 
 const configureWhiteList = async (allowedUsers) => {
   const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
@@ -38,23 +25,23 @@ describe('Deposit function', function () {
     defiRound = await deployLaunchContract()
   })
 
-  it('Should add ETH to the supported tokens list', async () => {
-    await addWethToSupportedTokens()
+  it('Should add native token to the supported tokens list', async () => {
+    await supportNativeToken(defiRound)
   })
 
   it('Should deposit funds successfully', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
-    await addWethToSupportedTokens()
-    await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
+    await supportNativeToken(defiRound)
+    await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
       value: amountToDeposit,
     })
   })
 
   it('Should deposit funds successfully & verify the evm state', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
-    await addWethToSupportedTokens()
+    await supportNativeToken(defiRound)
     const depositTx = await defiRound.deposit(
-      { token: WETH, amount: amountToDeposit },
+      { token: selectedChain.nativeToken.address, amount: amountToDeposit },
       [],
       { value: amountToDeposit },
     )
@@ -62,7 +49,7 @@ describe('Deposit function', function () {
     const [owner] = await ethers.getSigners()
     const accountData = (await defiRound.getAccountData(owner.address))[0]
 
-    expect(accountData.token).to.equal(WETH)
+    expect(accountData.token).to.equal(selectedChain.nativeToken.address)
     expect(accountData.currentBalance).to.equal(amountToDeposit)
     expect(accountData.initialDeposit).to.equal(amountToDeposit)
   })
@@ -88,10 +75,10 @@ describe('Deposit function', function () {
     const tree = await configureWhiteList(enabledUsers)
     const [owner] = await ethers.getSigners()
     const proof = tree.getProof(owner.address)
-    await addWethToSupportedTokens()
+    await supportNativeToken(defiRound)
 
     await expect(
-      defiRound.deposit({ token: WETH, amount: amountToDeposit }, proof, {
+      defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, proof, {
         value: amountToDeposit,
       }),
     ).to.be.revertedWith('PROOF_INVALID')
@@ -109,9 +96,9 @@ describe('Deposit function', function () {
     const proofObj = tree
       .getProof(hashAddress(owner.address))
       .map((pr) => pr.data)
-    await addWethToSupportedTokens()
+    await supportNativeToken(defiRound)
     await defiRound.deposit(
-      { token: WETH, amount: amountToDeposit },
+      { token: selectedChain.nativeToken.address, amount: amountToDeposit },
       proofObj,
       {
         value: amountToDeposit,
@@ -119,44 +106,44 @@ describe('Deposit function', function () {
     )
     const accountData = (await defiRound.getAccountData(owner.address))[0]
 
-    expect(accountData.token).to.equal(WETH)
+    expect(accountData.token).to.equal(selectedChain.nativeToken.address)
     expect(accountData.currentBalance).to.equal(amountToDeposit)
     expect(accountData.initialDeposit).to.equal(amountToDeposit)
   })
 
   it('Should verify the contract state after two deposits', async () => {
     const depositFunds = async (amountToDeposit) => {
-      await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
+      await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
         value: amountToDeposit,
       })
     }
     const amountToDeposit = ethers.utils.parseEther('0.000005')
     const [owner] = await ethers.getSigners()
-    await addWethToSupportedTokens()
+    await supportNativeToken(defiRound)
     await depositFunds(amountToDeposit)
     let accountData = (await defiRound.getAccountData(owner.address))[0]
 
-    expect(accountData.token).to.equal(WETH)
+    expect(accountData.token).to.equal(selectedChain.nativeToken.address)
     expect(accountData.currentBalance).to.equal(amountToDeposit)
     expect(accountData.initialDeposit).to.equal(amountToDeposit)
 
     await depositFunds(amountToDeposit)
     accountData = (await defiRound.getAccountData(owner.address))[0]
 
-    expect(accountData.token).to.equal(WETH)
+    expect(accountData.token).to.equal(selectedChain.nativeToken.address)
     expect(accountData.currentBalance).to.equal(amountToDeposit * 2)
     expect(accountData.initialDeposit).to.equal(amountToDeposit * 2)
   })
 
   it('Should reach the maxTotalValue great', async () => {
     const amountToDeposit = ethers.utils.parseEther('10.1')
-    await addWethToSupportedTokens()
-    await defiRound.deposit({ token: WETH, amount: amountToDeposit }, [], {
+    await supportNativeToken(defiRound)
+    await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
       value: amountToDeposit,
     })
     const secondAmountToDeposit = ethers.utils.parseEther('0.1')
     await expect(
-      defiRound.deposit({ token: WETH, amount: secondAmountToDeposit }, [], {
+      defiRound.deposit({ token: selectedChain.nativeToken.address, amount: secondAmountToDeposit }, [], {
         value: secondAmountToDeposit,
       }),
     ).to.be.revertedWith('DEPOSITS_LOCKED')
