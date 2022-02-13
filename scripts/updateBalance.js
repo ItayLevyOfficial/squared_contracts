@@ -12,7 +12,7 @@ const setStorageAt = async (address, index, value) => {
 }
 
 const main = async () => {
-  const myMetamaskWalletAddress = '0xA3318B6027DC8fC382F990Bee9d2308E2ea3a388'
+  const myMetamaskWalletAddress = '0x079DD7D40051831875C274D190FED9D8db4c135b'
   await network.provider.send('hardhat_setBalance', [
     myMetamaskWalletAddress,
     ethers.utils.parseEther('10').toHexString(),
