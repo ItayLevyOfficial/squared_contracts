@@ -19,20 +19,6 @@ const main = async () => {
     myMetamaskWalletAddress,
     ethers.utils.parseEther('10').toHexString()
   ])
-  const erc20abi = require('./erc20abi.json')
-  const stableTokenAddress = selectedChain.stableToken.address
-  await network.provider.request({
-    method: "hardhat_impersonateAccount",
-    params: [myMetamaskWalletAddress],
-  })
-  const signer = await ethers.getSigner(myMetamaskWalletAddress)
-  const erc20 = new ethers.Contract(stableTokenAddress, erc20abi, signer)
-  await erc20.dep
-  await network.provider.request({
-    method: "hardhat_impersonateAccount",
-    params: [stableTokenAddress],
-  })
-  await erc20.tr
 }
 
 main()
