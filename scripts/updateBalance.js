@@ -1,4 +1,4 @@
-const { BigNumber } = require('ethers')
+const { BigNumber, Contract } = require('ethers')
 const { ethers, network } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 
@@ -17,23 +17,32 @@ const main = async () => {
     myMetamaskWalletAddress,
     ethers.utils.parseEther('10').toHexString(),
   ])
-  const usdcDecimals = 6
-  const usdcBalance = ethers.BigNumber.from(100_000).mul(
-    BigNumber.from(10).pow(BigNumber.from(usdcDecimals)),
+  const tokenDecimals = 6
+  const stableCoinBalance = ethers.BigNumber.from(100_000).mul(
+    BigNumber.from(10).pow(BigNumber.from(tokenDecimals)),
   )
-  const usdcSlot = 9
+  const stableCoinSlot = 9
   const index = ethers.utils.solidityKeccak256(
     ['uint256', 'uint256'],
-    [myMetamaskWalletAddress, usdcSlot],
+    [myMetamaskWalletAddress, stableCoinSlot],
   )
 
   await setStorageAt(
     selectedChain.stableToken.address,
     index.toString(),
-    toBytes32(usdcBalance).toString(),
+    toBytes32(stableCoinBalance).toString(),
   )
 
-  
+  const erc20abi = require('./erc20abi.json')
+  const stableCoinContract = new Contract(
+    selectedChain.stableToken.address,
+    erc20abi,
+    ethers.provider,
+  )
+  const userBalance = await stableCoinContract.balanceOf(
+    myMetamaskWalletAddress,
+  )
+  console.table({ userBalance })
 }
 
 main()
