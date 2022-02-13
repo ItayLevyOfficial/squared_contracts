@@ -32,6 +32,8 @@ const main = async () => {
     index.toString(),
     toBytes32(usdcBalance).toString(),
   )
+
+  
 }
 
 main()
