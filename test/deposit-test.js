@@ -87,6 +87,8 @@ describe('Deposit function', function () {
   it('Should deposit funds successfully from a whitelisted address', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
     const address1 = ethers.Wallet.createRandom().address
+    const address2 = ethers.Wallet.createRandom().address
+    const address3 = ethers.Wallet.createRandom().address
     const [owner] = await ethers.getSigners()
     const currentAddress = owner.address
     const enabledUsers = [currentAddress, address1]
