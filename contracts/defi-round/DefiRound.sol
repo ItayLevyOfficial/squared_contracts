@@ -228,7 +228,7 @@ contract DefiRound is IDefiRound, Ownable {
         value = value.add(getTokenValue(accountData[account].token, tokenBalance));   
     }
 
-    function accountToken(address account) external view returns (address token) {
+    function accountToken(address account) external view override returns (address token) {
         return accountData[account].token;
     }
 
