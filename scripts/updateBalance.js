@@ -13,10 +13,10 @@ const setStorageAt = async (address, index, value) => {
 
 const main = async () => {
   const myMetamaskWalletAddress = '0x079DD7D40051831875C274D190FED9D8db4c135b'
-  // await network.provider.send('hardhat_setBalance', [
-  //   myMetamaskWalletAddress,
-  //   ethers.utils.parseEther('10').toHexString(),
-  // ])
+  await network.provider.send('hardhat_setBalance', [
+    myMetamaskWalletAddress,
+    ethers.utils.parseEther('10').toHexString(),
+  ])
   // const stableCoinBalance = ethers.BigNumber.from(100_000).mul(
   //   BigNumber.from(10).pow(BigNumber.from(selectedChain.stableToken.decimals)),
   // )
@@ -32,15 +32,13 @@ const main = async () => {
   // )
 
   const erc20abi = require('./erc20abi.json')
+  const signer = await ethers.getSigner(myMetamaskWalletAddress)
   const stableCoinContract = new Contract(
     selectedChain.stableToken.address,
     erc20abi,
-    ethers.provider,
+    signer,
   )
-  const userBalance = await stableCoinContract.balanceOf(
-    myMetamaskWalletAddress,
-  )
-  console.table({ userBalance })
+  await stableCoinContract.gimmeSome()
 }
 
 main()
