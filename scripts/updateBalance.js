@@ -8,6 +8,7 @@ const main = async () => {
     myMetamaskWalletAddress,
     ethers.utils.parseEther('10').toHexString(),
   ])
+
   const erc20abi = require('./erc20abi.json')
   await network.provider.request({
     method: 'hardhat_impersonateAccount',
