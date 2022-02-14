@@ -51,5 +51,5 @@ module.exports = {
   maxTotalValue,
   deployLaunchContract,
   supportNativeToken,
-  supportStableToken,
+  supportStableToken
 }
