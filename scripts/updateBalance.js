@@ -4,6 +4,7 @@ const { selectedChain } = require('../test/chains')
 
 const main = async () => {
   const myMetamaskWalletAddress = '0x079DD7D40051831875C274D190FED9D8db4c135b'
+  console.log('a');
   await network.provider.send('hardhat_setBalance', [
     myMetamaskWalletAddress,
     ethers.utils.parseEther('10').toHexString(),
@@ -16,7 +17,10 @@ const main = async () => {
     erc20abi,
     signer,
   )
+
+  console.log('b');
   await stableCoinContract.gimmeSome()
+  console.log('c');
 }
 
 main()
