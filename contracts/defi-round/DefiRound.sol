@@ -15,7 +15,6 @@ import "../interfaces/ILiquidityPool.sol";
 import "../interfaces/IDefiRound.sol";
 import "../interfaces/IWETH.sol";
 import "@openzeppelin/contracts/cryptography/MerkleProof.sol";
-import "hardhat/console.sol";
 
 contract DefiRound is IDefiRound, Ownable {
     using SafeMath for uint256;
