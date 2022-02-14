@@ -99,9 +99,7 @@ contract DefiRound is IDefiRound, Ownable {
 
         // No need to transfer from msg.sender since is ETH was converted to WETH
         if (!(token == WETH && msg.value > 0)) {
-            console.log("Got here!! %s", token);
             IERC20(token).safeTransferFrom(msg.sender, address(this), tokenAmount);    
-            console.log("didnot Got here :(");
         }
         
         if(_totalValue() > maxTotalValue) {
