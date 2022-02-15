@@ -1,7 +1,11 @@
+const { BigNumber } = require('ethers')
 const { ethers } = require('hardhat')
 const { selectedChain } = require('./chains')
 const ethPrice = 2599_46882140
 const maxTotalValue = ethPrice * 10
+
+const formatNumber = (number, decimals) =>
+  BigNumber.from(number).mul(BigNumber.from(10).pow(BigNumber.from(decimals)))
 
 const supportStableToken = async (defiRound) => {
   const stableToken = selectedChain.stableToken
@@ -12,7 +16,7 @@ const supportStableToken = async (defiRound) => {
       token: stableToken.address,
       oracle: stableToken.chainlinkAddress,
       genesis: genesisPoolAddress,
-      maxLimit: ethers.utils.parseEther('100'),
+      maxLimit: formatNumber(100_000, stableToken.decimals),
     },
   ])
 }
@@ -35,12 +39,17 @@ const deployLaunchContract = async () => {
   const DefiRound = await ethers.getContractFactory('DefiRound')
   const treasuryWallet = ethers.Wallet.createRandom()
   const treasury = treasuryWallet.address
-  return await DefiRound.deploy(selectedChain.nativeToken.address, treasury, maxTotalValue)
+  return await DefiRound.deploy(
+    selectedChain.nativeToken.address,
+    treasury,
+    maxTotalValue,
+  )
 }
 
 module.exports = {
   ethPrice,
   maxTotalValue,
   deployLaunchContract,
-  supportNativeToken,supportStableToken
+  supportNativeToken,
+  supportStableToken
 }

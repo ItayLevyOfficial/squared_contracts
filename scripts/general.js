@@ -1,14 +1,9 @@
+const { myMetamaskWalletAddress } = require('./constants')
 const { Contract } = require('ethers')
 const { ethers, network } = require('hardhat')
 const { selectedChain } = require('../test/chains')
-const { myMetamaskWalletAddress } = require('./constants')
 
 const main = async () => {
-  await network.provider.send('hardhat_setBalance', [
-    myMetamaskWalletAddress,
-    ethers.utils.parseEther('10').toHexString(),
-  ])
-
   const erc20abi = require('./erc20abi.json')
   await network.provider.request({
     method: 'hardhat_impersonateAccount',
@@ -20,11 +15,8 @@ const main = async () => {
     erc20abi,
     signer,
   )
-  await stableCoinContract.gimmeSome()
-  await network.provider.request({
-    method: 'hardhat_stopImpersonatingAccount',
-    params: [myMetamaskWalletAddress],
-  })
+  const myBalance = await stableCoinContract.balanceOf(myMetamaskWalletAddress)
+  console.table({ myBalance })
 }
 
 main()
