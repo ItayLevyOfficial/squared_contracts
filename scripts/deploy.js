@@ -7,7 +7,7 @@ const main = async () => {
   const treasuryWallet = ethers.Wallet.createRandom()
   const treasury = treasuryWallet.address
   // Need extra 8 zeros for the decimals.
-  const maxTotalValue = 100_000_00000000
+  const maxTotalValue = 48_000_000_00000000
 
   const defiRound = await DefiRound.deploy(
     selectedChain.nativeToken.address,
