@@ -80,6 +80,7 @@ interface IDefiRound {
     function totalValue() external view returns (uint256 value);
 
     /// @notice Current Max Total Value
+    /// @return value the max total value
     function getMaxTotalValue() external view returns (uint256 value);
 
     /// @notice returns the address of the treasury, when users claim this is where funds that are <= maxClaimableValue go
@@ -130,8 +131,6 @@ interface IDefiRound {
     /// @param account the account to look up
     /// @return value the value of the account in USD
     function accountBalance(address account) external view returns (uint256 value);
-
-    function accountToken(address account) external view returns (address token);
 
     /// @notice Moves excess assets to private farming or refunds them
     /// @dev uses the publishedRates, selected tokens, and amounts to determine what amount of TOKE is claimed

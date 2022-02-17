@@ -75,6 +75,7 @@ contract DefiRound is IDefiRound, Ownable {
         uint256 tokenAmount = data.amount;
         require(supportedTokens.contains(token), "UNSUPPORTED_TOKEN");
         require(tokenAmount > 0, "INVALID_AMOUNT");
+
         // Convert ETH to WETH if ETH is passed in, otherwise treat WETH as a regular ERC20
         if (token == WETH && msg.value > 0) {
             require(tokenAmount == msg.value, "INVALID_MSG_VALUE"); 
@@ -226,10 +227,6 @@ contract DefiRound is IDefiRound, Ownable {
     function accountBalance(address account) external view override returns (uint256 value) {
         uint256 tokenBalance = accountData[account].currentBalance;
         value = value.add(getTokenValue(accountData[account].token, tokenBalance));   
-    }
-
-    function accountToken(address account) external view override returns (address token) {
-        return accountData[account].token;
     }
 
     function finalizeAssets(bool depositToGenesis) external override {

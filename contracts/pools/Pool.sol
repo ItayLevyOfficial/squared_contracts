@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 pragma solidity 0.6.11;
+pragma experimental ABIEncoderV2;
 
 import "../interfaces/ILiquidityPool.sol";
 import "../interfaces/IManager.sol";
@@ -12,12 +13,16 @@ import {ERC20Upgradeable as ERC20} from "@openzeppelin/contracts-upgradeable/tok
 import {IERC20Upgradeable as IERC20} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import {SafeERC20Upgradeable as SafeERC20} from "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
 import {PausableUpgradeable as Pausable} from "@openzeppelin/contracts-upgradeable/utils/PausableUpgradeable.sol";
+import "../interfaces/events/BalanceUpdateEvent.sol";
+import "../interfaces/events/Destinations.sol";
+import "../fxPortal/IFxStateSender.sol";
+import "../interfaces/events/IEventSender.sol";
 
-contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
+contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable, IEventSender {
     using SafeMath for uint256;
     using SafeERC20 for ERC20;
 
-    ERC20 public override underlyer;
+    ERC20 public override underlyer; // Underlying ERC20 token
     IManager public manager;
 
     // implied: deployableLiquidity = underlyer.balanceOf(this) - withheldLiquidity
@@ -26,16 +31,30 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
     // fAsset holder -> WithdrawalInfo
     mapping(address => WithdrawalInfo) public override requestedWithdrawals;
 
-    // NonReentrant state variables
-    uint256 private constant _NOT_ENTERED = 1;
-    uint256 private constant _ENTERED = 2;
-    uint256 private _status = _NOT_ENTERED;
+    // NonReentrant
+    bool private _entered;
+    bool public _eventSend;
+    Destinations public destinations;
+
+    bool public depositsPaused;
 
     modifier nonReentrant() {
-        require(_status != _ENTERED, "ReentrancyGuard: reentrant call");
-        _status = _ENTERED;
+        require(!_entered, "ReentrancyGuard: reentrant call");
+        _entered = true;
         _;
-        _status = _NOT_ENTERED;
+        _entered = false;
+    }
+
+    modifier onEventSend() {
+        if (_eventSend) {
+            _;
+        }
+    }
+
+    modifier whenDepositsNotPaused() {
+        require(!paused(), "Pausable: paused");
+        require(!depositsPaused, "DEPOSITS_PAUSED");
+        _;
     }
 
     function initialize(
@@ -56,22 +75,22 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
         manager = _manager;
     }
 
+    ///@notice Gets decimals of underlyer so that tAsset decimals will match
     function decimals() public view override returns (uint8) {
         return underlyer.decimals();
     }
 
-    function deposit(uint256 amount) external override whenNotPaused {
+    function deposit(uint256 amount) external override whenDepositsNotPaused {
         _deposit(msg.sender, msg.sender, amount);
     }
 
-    function depositFor(address account, uint256 amount) external override whenNotPaused {
+    function depositFor(address account, uint256 amount) external override whenDepositsNotPaused {
         _deposit(msg.sender, account, amount);
     }
 
     /// @dev References the WithdrawalInfo for how much the user is permitted to withdraw
     /// @dev No withdrawal permitted unless currentCycle >= minCycle
     /// @dev Decrements withheldLiquidity by the withdrawn amount
-    /// @dev TODO Update rewardsContract with proper accounting
     function withdraw(uint256 requestedAmount) external override whenNotPaused nonReentrant {
         require(
             requestedAmount <= requestedWithdrawals[msg.sender].amount,
@@ -80,6 +99,7 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
         require(requestedAmount > 0, "NO_WITHDRAWAL");
         require(underlyer.balanceOf(address(this)) >= requestedAmount, "INSUFFICIENT_POOL_BALANCE");
 
+        // Checks for manager cycle and if user is allowed to withdraw based on their minimum withdrawal cycle
         require(
             requestedWithdrawals[msg.sender].minCycle <= manager.getCurrentCycleIndex(),
             "INVALID_CYCLE"
@@ -89,6 +109,7 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
             requestedAmount
         );
 
+        // If full amount withdrawn delete from mapping
         if (requestedWithdrawals[msg.sender].amount == 0) {
             delete requestedWithdrawals[msg.sender];
         }
@@ -96,8 +117,10 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
         withheldLiquidity = withheldLiquidity.sub(requestedAmount);
 
         _burn(msg.sender, requestedAmount);
-
         underlyer.safeTransfer(msg.sender, requestedAmount);
+
+        bytes32 eventSig = "Withdraw";
+        encodeAndSendData(eventSig, msg.sender);
     }
 
     /// @dev Adjusts the withheldLiquidity as necessary
@@ -112,10 +135,14 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
         );
         requestedWithdrawals[msg.sender].amount = amount;
         if (manager.getRolloverStatus()) {
+            // If manger is currently rolling over add two to min withdrawal cycle
             requestedWithdrawals[msg.sender].minCycle = manager.getCurrentCycleIndex().add(2);
         } else {
+            // If manager is not rolling over add one to minimum withdrawal cycle
             requestedWithdrawals[msg.sender].minCycle = manager.getCurrentCycleIndex().add(1);
         }
+
+        emit WithdrawalRequested(msg.sender, amount);
     }
 
     function preTransferAdjustWithheldLiquidity(address sender, uint256 amount) internal {
@@ -156,10 +183,17 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
         public
         override
         whenNotPaused
+        nonReentrant
         returns (bool)
     {
         preTransferAdjustWithheldLiquidity(msg.sender, amount);
-        return super.transfer(recipient, amount);
+        bool success = super.transfer(recipient, amount);
+
+        bytes32 eventSig = "Transfer";
+        encodeAndSendData(eventSig, msg.sender);
+        encodeAndSendData(eventSig, recipient);
+
+        return success;
     }
 
     /// @dev Adjust withheldLiquidity and requestedWithdrawal if sender does not have sufficient unlocked balance for the transfer
@@ -167,9 +201,27 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
         address sender,
         address recipient,
         uint256 amount
-    ) public override whenNotPaused returns (bool) {
+    ) public override whenNotPaused nonReentrant returns (bool) {
         preTransferAdjustWithheldLiquidity(sender, amount);
-        return super.transferFrom(sender, recipient, amount);
+        bool success = super.transferFrom(sender, recipient, amount);
+
+        bytes32 eventSig = "Transfer";
+        encodeAndSendData(eventSig, sender);
+        encodeAndSendData(eventSig, recipient);
+
+        return success;
+    }
+
+    function pauseDeposit() external override onlyOwner {
+        depositsPaused = true;
+
+        emit DepositsPaused();
+    }
+
+    function unpauseDeposit() external override onlyOwner {
+        depositsPaused = false;
+
+        emit DepositsUnpaused();
     }
 
     function pause() external override onlyOwner {
@@ -180,6 +232,28 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
         _unpause();
     }
 
+    function setDestinations(address _fxStateSender, address _destinationOnL2)
+        external
+        override
+        onlyOwner
+    {
+        require(_fxStateSender != address(0), "INVALID_ADDRESS");
+        require(_destinationOnL2 != address(0), "INVALID_ADDRESS");
+
+        destinations.fxStateSender = IFxStateSender(_fxStateSender);
+        destinations.destinationOnL2 = _destinationOnL2;
+
+        emit DestinationsSet(_fxStateSender, _destinationOnL2);
+    }
+
+    function setEventSend(bool _eventSendSet) external override onlyOwner {
+        require(destinations.destinationOnL2 != address(0), "DESTINATIONS_NOT_SET");
+        
+        _eventSend = _eventSendSet;
+
+        emit EventSendSet(_eventSendSet);
+    }
+
     function _deposit(
         address fromAccount,
         address toAccount,
@@ -187,7 +261,28 @@ contract Pool is ILiquidityPool, Initializable, ERC20, Ownable, Pausable {
     ) internal {
         require(amount > 0, "INVALID_AMOUNT");
         require(toAccount != address(0), "INVALID_ADDRESS");
+
         _mint(toAccount, amount);
         underlyer.safeTransferFrom(fromAccount, address(this), amount);
+
+        bytes32 eventSig = "Deposit";
+        encodeAndSendData(eventSig, toAccount);
+    }
+
+    function encodeAndSendData(bytes32 _eventSig, address _user) private onEventSend {
+        require(address(destinations.fxStateSender) != address(0), "ADDRESS_NOT_SET");
+        require(destinations.destinationOnL2 != address(0), "ADDRESS_NOT_SET");
+
+        uint256 userBalance = balanceOf(_user);
+        bytes memory data = abi.encode(
+            BalanceUpdateEvent({
+                eventSig: _eventSig,
+                account: _user,
+                token: address(this),
+                amount: userBalance
+            })
+        );
+
+        destinations.fxStateSender.sendMessageToChild(destinations.destinationOnL2, data);
     }
 }
