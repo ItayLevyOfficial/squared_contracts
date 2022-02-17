@@ -19,9 +19,9 @@ const chains = {
   bsc: {
     forkData: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
-      blockNumber: 16841296
-    }
+      blockNumber: 16841296,
+    },
   },
 }
 
-module.exports = { selectedChain: chains.bsc }
+module.exports = { selectedChain: chains.ethereum }
