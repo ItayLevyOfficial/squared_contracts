@@ -21,7 +21,14 @@ const chains = {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
       blockNumber: 16841296,
     },
+    nativeToken: {
+      address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
+      chainlinkAddress: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE'
+    },
+    stableToken: {
+      
+    }
   },
 }
 
-module.exports = { selectedChain: chains.ethereum }
+module.exports = { selectedChain: chains.bsc }
