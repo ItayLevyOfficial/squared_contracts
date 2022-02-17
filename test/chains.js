@@ -16,6 +16,12 @@ const chains = {
       slot: 9, // To update the balance manually on hardhat network
     },
   },
+  bsc: {
+    forkData: {
+      url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
+      blockNumber: 16841296
+    }
+  },
 }
 
-module.exports = { selectedChain: chains.ethereum }
+module.exports = { selectedChain: chains.bsc }
