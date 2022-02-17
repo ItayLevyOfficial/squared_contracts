@@ -17,7 +17,7 @@ import {PausableUpgradeable as Pausable} from "@openzeppelin/contracts-upgradeab
 import {ReentrancyGuardUpgradeable as ReentrancyGuard} from "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
 import "../interfaces/events/Destinations.sol";
 import "../interfaces/events/BalanceUpdateEvent.sol";
-import "../interfaces/IDelegateFunction.sol";
+// import "../interfaces/IDelegateFunction.sol";
 import "../interfaces/events/IEventSender.sol";
 
 contract Staking is IStaking, Initializable, Ownable, Pausable, ReentrancyGuard, IEventSender {
@@ -53,7 +53,7 @@ contract Staking is IStaking, Initializable, Ownable, Pausable, ReentrancyGuard,
     bool public _eventSend;
     Destinations public destinations;
 
-    IDelegateFunction public delegateFunction; //DEPRECATED
+    // IDelegateFunction public delegateFunction; //DEPRECATED
 
     // ScheduleIdx => notional address
     mapping(uint256 => address) public notionalAddresses;

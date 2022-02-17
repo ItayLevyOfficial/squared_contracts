@@ -1,23 +1,23 @@
-//SPDX-License-Identifier: MIT
-pragma solidity >=0.6.11 <=0.6.12;
+// //SPDX-License-Identifier: MIT
+// pragma solidity >=0.6.11 <=0.6.12;
 
-import "../interfaces/IAddressRegistry.sol";
+// import "../interfaces/IAddressRegistry.sol";
 
-contract BaseController {
+// contract BaseController {
 
-    address public immutable manager;
-    IAddressRegistry public immutable addressRegistry;
+//     address public immutable manager;
+//     IAddressRegistry public immutable addressRegistry;
 
-    constructor(address _manager, address _addressRegistry) public {
-        require(_manager != address(0), "INVALID_ADDRESS");
-        require(_addressRegistry != address(0), "INVALID_ADDRESS");
+//     constructor(address _manager, address _addressRegistry) public {
+//         require(_manager != address(0), "INVALID_ADDRESS");
+//         require(_addressRegistry != address(0), "INVALID_ADDRESS");
 
-        manager = _manager;
-        addressRegistry = IAddressRegistry(_addressRegistry);
-    }
+//         manager = _manager;
+//         addressRegistry = IAddressRegistry(_addressRegistry);
+//     }
 
-    modifier onlyManager() {
-        require(address(this) == manager, "NOT_MANAGER_ADDRESS");
-        _;
-    }
-}
+//     modifier onlyManager() {
+//         require(address(this) == manager, "NOT_MANAGER_ADDRESS");
+//         _;
+//     }
+// }
