@@ -1,3 +1,3 @@
 module.exports = {
-  myMetamaskWalletAddress: '0x079DD7D40051831875C274D190FED9D8db4c135b',
+  myMetamaskWalletAddress: '0xeD269fD4e4c116b2bBB1874b96237fea70A6764d',
 }
