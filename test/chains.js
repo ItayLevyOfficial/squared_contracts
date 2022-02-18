@@ -23,4 +23,4 @@ const chains = {
   },
 }
 
-module.exports = { selectedChain: chains.ethereum, chains }
+module.exports = { selectedChain: chains.bsc, chains }
