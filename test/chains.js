@@ -7,8 +7,7 @@ const chains = {
     stableToken: {
       address: '0xb9bEECD1A582768711dE1EE7B0A1d582D9d72a6C',
       chainlinkAddress: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
-      decimals: 6,
-      slot: 9, // To update the balance manually on hardhat network
+      decimals: 6
     },
   },
   bsc: {
@@ -20,7 +19,6 @@ const chains = {
       address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
       chainlinkAddress: '0xcBb98864Ef56E9042e7d2efef76141f15731B82f',
       decimals: 18,
-      slot: 1,
     },
   },
 }
