@@ -16,7 +16,7 @@ const chains = {
       chainlinkAddress: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE',
     },
     stableToken: {
-      address: '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56',
+      address: '0x4fabb145d64652a948d72533023f6e7a623c7c53',
       chainlinkAddress: '0xcBb98864Ef56E9042e7d2efef76141f15731B82f',
       decimals: 18,
     },
