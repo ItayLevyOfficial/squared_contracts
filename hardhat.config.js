@@ -18,13 +18,26 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
-  solidity: '0.6.11',
+  solidity: {
+    version: '0.6.11',
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1
+      }
+    }
+  } ,
   defaultNetwork: 'bscTestnet',
+  
   networks: {
     hardhat: {
       chainId: 1337,
       allowUnlimitedContractSize: true,
-      forking: selectedChain.forkData,
+      forking: {
+        url:
+          'https://eth-mainnet.alchemyapi.io/v2/2wzUWNwC9bpWNB5tNUznTTL0yogzqamW',
+        blockNumber: 14101114,
+      },
     },
     bscTestnet: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
