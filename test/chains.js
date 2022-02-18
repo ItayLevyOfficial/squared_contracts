@@ -34,4 +34,4 @@ const chains = {
   },
 }
 
-module.exports = { selectedChain: chains.bsc }
+module.exports = { selectedChain: chains.ethereum }
