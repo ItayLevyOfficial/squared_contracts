@@ -6,7 +6,7 @@ const { myMetamaskWalletAddress } = require('./constants')
 const main = async () => {
   await network.provider.send('hardhat_setBalance', [
     myMetamaskWalletAddress,
-    ethers.utils.parseEther('10').toHexString(),
+    ethers.utils.parseEther('5').toHexString(),
   ])
 
   const erc20abi = require('./erc20abi.json')
@@ -14,12 +14,14 @@ const main = async () => {
     method: 'hardhat_impersonateAccount',
     params: [myMetamaskWalletAddress],
   })
+
   const signer = await ethers.getSigner(myMetamaskWalletAddress)
   const stableCoinContract = new Contract(
     selectedChain.stableToken.address,
     erc20abi,
-    signer,
+    signer
   )
+
   await stableCoinContract.gimmeSome()
   await network.provider.request({
     method: 'hardhat_stopImpersonatingAccount',
