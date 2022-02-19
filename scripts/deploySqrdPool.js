@@ -5,10 +5,10 @@ const main = async () => {
   const poolRound = await upgrades.deployProxy(
     PoolRound,
     [
-      '0xfcDB4564c18A9134002b9771816092C9693622e3', // Fake USDC
+      '0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44', // Fake SQRD
       '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
-      'USDC',
-      'USDC',
+      'SQRD',
+      'SQRD',
     ],
     { initializer: 'initialize' }
   )
