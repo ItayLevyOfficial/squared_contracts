@@ -132,12 +132,11 @@ interface IDefiRound {
     /// @return value the value of the account in USD
     function accountBalance(address account) external view returns (uint256 value);
 
-<<<<<<< HEAD
-=======
+
 
     function accountToken(address account) external view returns (address token);
 
->>>>>>> 1e11dcb5408f021693cfff244c4b16b4528ecd9f
+
     /// @notice Moves excess assets to private farming or refunds them
     /// @dev uses the publishedRates, selected tokens, and amounts to determine what amount of TOKE is claimed
     /// @param depositToGenesis applies only if oversubscribedMultiplier < 1;
