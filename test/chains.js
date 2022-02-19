@@ -12,13 +12,11 @@ const chains = {
     },
     sqrdToken: {
       address: '0x638A246F0Ec8883eF68280293FFE8Cfbabe61B44', // Fake SQRD
-      chainlinkAddress: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
       decimals: 6,
       slot: 9, // To update the balance manually on hardhat network
     },
     sqrdLpToken: {
-      address: '', // Fake SQRD LP
-      chainlinkAddress: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
+      address: '0x0ed64d01D0B4B655E410EF1441dD677B695639E7', // Fake SQRD LP
       decimals: 6,
       slot: 9, // To update the balance manually on hardhat network
     },
