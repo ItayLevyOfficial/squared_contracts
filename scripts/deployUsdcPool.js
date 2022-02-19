@@ -1,14 +1,14 @@
 const { ethers, upgrades } = require('hardhat')
 
 const main = async () => {
-  const PoolRound = await ethers.getContractFactory('EthPool')
+  const PoolRound = await ethers.getContractFactory('Pool')
   const poolRound = await upgrades.deployProxy(
     PoolRound,
     [
-      '0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9',
-      '0xfcDB4564c18A9134002b9771816092C9693622e3',
-      'ETH',
-      'ETH',
+      '0x02b0B4EFd909240FCB2Eb5FAe060dC60D112E3a4', // Fake USDC
+      '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
+      'USDC',
+      'USDC',
     ],
     { initializer: 'initialize' }
   )
