@@ -13,11 +13,11 @@ const chains = {
   bsc: {
     nativeToken: {
       address: '0x5b3e2bc1da86ff6235d9ead4504d598cae77dbcb',
-      chainlinkAddress: '0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE',
+      chainlinkAddress: '0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526',
     },
     stableToken: {
       address: '0x8301F2213c0eeD49a7E28Ae4c3e91722919B8B47',
-      chainlinkAddress: '0xcBb98864Ef56E9042e7d2efef76141f15731B82f',
+      chainlinkAddress: '0x9331b55D9830EF609A2aBCfAc0FBCE050A52fdEa',
       decimals: 18,
     },
   },
