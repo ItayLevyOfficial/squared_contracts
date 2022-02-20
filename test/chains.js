@@ -14,6 +14,7 @@ const chains = {
     nativeToken: {
       address: '0x5b3e2bc1da86ff6235d9ead4504d598cae77dbcb',
       chainlinkAddress: '0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526',
+      decimals: 8
     },
     stableToken: {
       address: '0x8301F2213c0eeD49a7E28Ae4c3e91722919B8B47',
