@@ -16,8 +16,8 @@ const main = async () => {
   )
   const contractAddress = (await defiRound.deployed()).address
   console.table({ contractAddress })
-  await supportNativeToken(defiRound)
-  await supportStableToken(defiRound)
+  // await supportNativeToken(defiRound)
+  // await supportStableToken(defiRound)
 }
 
 main()
