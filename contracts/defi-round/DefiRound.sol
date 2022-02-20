@@ -229,13 +229,12 @@ contract DefiRound is IDefiRound, Ownable {
         value = value.add(getTokenValue(accountData[account].token, tokenBalance));   
     }
 
-<<<<<<< HEAD
-=======
+
+
     function accountToken(address account) external view override returns (address token) {
         return accountData[account].token;
     }
     
->>>>>>> 1e11dcb5408f021693cfff244c4b16b4528ecd9f
     function finalizeAssets(bool depositToGenesis) external override {
         require(currentStage == STAGES.STAGE_3, "NOT_SYSTEM_FINAL");
          
