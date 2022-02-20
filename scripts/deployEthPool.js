@@ -5,7 +5,7 @@ const main = async () => {
   const poolRound = await upgrades.deployProxy(
     PoolRound,
     [
-      '0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9',
+      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
       '0xfcDB4564c18A9134002b9771816092C9693622e3',
       'ETH',
       'ETH',

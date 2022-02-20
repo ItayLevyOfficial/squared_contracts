@@ -133,7 +133,9 @@ interface IDefiRound {
     function accountBalance(address account) external view returns (uint256 value);
 
 
+
     function accountToken(address account) external view returns (address token);
+
 
     /// @notice Moves excess assets to private farming or refunds them
     /// @dev uses the publishedRates, selected tokens, and amounts to determine what amount of TOKE is claimed
