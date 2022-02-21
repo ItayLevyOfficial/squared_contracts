@@ -41,7 +41,7 @@ contract DefiRound is IDefiRound, Ownable {
     STAGES public override currentStage;
 
     WhitelistSettings public whitelistSettings;
-    uint256 public lastLookExpiration  = type(uint256).max;
+    uint256 public lastLookExpiration = type(uint256).max;
     uint256 private immutable maxTotalValue;
     bool private stage1Locked;
 
