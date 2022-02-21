@@ -1,12 +1,14 @@
 const { ethers, upgrades } = require('hardhat')
+const { selectedChain } = require('../test/chains')
 
 const main = async () => {
-  const SqrdRound = await ethers.getContractFactory('Pool')
+  const PoolRound = await ethers.getContractFactory('Pool')
+
   const sqrdRound = await upgrades.deployProxy(
-    SqrdRound,
+    PoolRound,
     [
-      '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake SQRD
-      '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
+      `${selectedChain.sqrdToken.address}`,
+      `${selectedChain.manager.address}`,
       'SQRD',
       'SQRD',
     ],
@@ -14,14 +16,13 @@ const main = async () => {
   )
   await sqrdRound.deployed()
   const sqrdcontractAddress = (await sqrdRound.deployed()).address
-  console.log('SQRD Contract', sqrdcontractAddress)
+  console.log('SQRD Contract:', sqrdcontractAddress)
 
-  const SqrdLpRound = await ethers.getContractFactory('Pool')
   const sqrdLpRound = await upgrades.deployProxy(
-    SqrdLpRound,
+    PoolRound,
     [
-      '0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9', // Fake SQRD LP
-      '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
+      `${selectedChain.sqrdLpToken.address}`,
+      `${selectedChain.manager.address}`,
       'SQRD_LP',
       'SQRD_LP',
     ],
@@ -29,14 +30,13 @@ const main = async () => {
   )
   await sqrdLpRound.deployed()
   const sqrdLpcontractAddress = (await sqrdLpRound.deployed()).address
-  console.log('SQRD LP Contract', sqrdLpcontractAddress)
+  console.log('SQRD LP Contract:', sqrdLpcontractAddress)
 
-  const UsdcRound = await ethers.getContractFactory('Pool')
   const usdcRound = await upgrades.deployProxy(
-    UsdcRound,
+    PoolRound,
     [
-      '0x5FeaeBfB4439F3516c74939A9D04e95AFE82C4ae', // Fake USDC
-      '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
+      `${selectedChain.stableToken.address}`,
+      `${selectedChain.manager.address}`,
       'USDC',
       'USDC',
     ],
@@ -44,22 +44,22 @@ const main = async () => {
   )
   await usdcRound.deployed()
   const usdcContractAddress = (await usdcRound.deployed()).address
-  console.log('USDC Contract', usdcContractAddress)
+  console.log('USDC Contract:', usdcContractAddress)
 
-  const PoolRound = await ethers.getContractFactory('EthPool')
-  const poolRound = await upgrades.deployProxy(
-    PoolRound,
+  const EthPoolRound = await ethers.getContractFactory('EthPool')
+  const ethPoolRound = await upgrades.deployProxy(
+    EthPoolRound,
     [
-      '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      '0xfcDB4564c18A9134002b9771816092C9693622e3',
+      `${selectedChain.nativeToken.address}`,
+      `${selectedChain.manager.address}`,
       'ETH',
       'ETH',
     ],
     { initializer: 'initialize' }
   )
-  await poolRound.deployed()
-  const contractAddress = (await poolRound.deployed()).address
-  console.log('ETH Contract:', contractAddress)
+  await ethPoolRound.deployed()
+  const ethContractAddress = (await ethPoolRound.deployed()).address
+  console.log('ETH Contract:', ethContractAddress)
 }
 
 main()
