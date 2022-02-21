@@ -17,7 +17,7 @@ const main = async () => {
 
   const signer = await ethers.getSigner(myMetamaskWalletAddress)
   const stableCoinContract = new Contract(
-    selectedChain.sqrdLpToken.address,
+    selectedChain.stableToken.address,
     erc20abi,
     signer
   )
