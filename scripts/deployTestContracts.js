@@ -5,7 +5,7 @@ const main = async () => {
   const sqrdRound = await upgrades.deployProxy(
     SqrdRound,
     [
-      '0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849', // Fake SQRD
+      '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake SQRD
       '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
       'SQRD',
       'SQRD',
@@ -20,7 +20,7 @@ const main = async () => {
   const sqrdLpRound = await upgrades.deployProxy(
     SqrdLpRound,
     [
-      '0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8', // Fake SQRD LP
+      '0xCA8c8688914e0F7096c920146cd0Ad85cD7Ae8b9', // Fake SQRD LP
       '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
       'SQRD_LP',
       'SQRD_LP',
@@ -35,7 +35,7 @@ const main = async () => {
   const usdcRound = await upgrades.deployProxy(
     UsdcRound,
     [
-      '0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55', // Fake USDC
+      '0x5FeaeBfB4439F3516c74939A9D04e95AFE82C4ae', // Fake USDC
       '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B',
       'USDC',
       'USDC',
