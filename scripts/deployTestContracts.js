@@ -1,13 +1,13 @@
 const { ethers, upgrades } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 
-const deployPool = async (selectedChain, tokenName) => {
+const deployPool = async (chain, tokenName) => {
   const PoolRound = await ethers.getContractFactory('Pool')
 
   const poolRound = await upgrades.deployProxy(
     PoolRound,
     [
-      `${selectedChain.address}`,
+      `${chain.address}`,
       `${selectedChain.managerToken.address}`,
       `${tokenName}`,
       `${tokenName}`,
