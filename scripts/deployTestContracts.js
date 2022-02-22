@@ -8,7 +8,7 @@ const main = async () => {
     PoolRound,
     [
       `${selectedChain.sqrdToken.address}`,
-      `${selectedChain.manager.address}`,
+      `${selectedChain.managerToken.address}`,
       'SQRD',
       'SQRD',
     ],
@@ -22,7 +22,7 @@ const main = async () => {
     PoolRound,
     [
       `${selectedChain.sqrdLpToken.address}`,
-      `${selectedChain.manager.address}`,
+      `${selectedChain.managerToken.address}`,
       'SQRD_LP',
       'SQRD_LP',
     ],
@@ -36,7 +36,7 @@ const main = async () => {
     PoolRound,
     [
       `${selectedChain.stableToken.address}`,
-      `${selectedChain.manager.address}`,
+      `${selectedChain.managerToken.address}`,
       'USDC',
       'USDC',
     ],
@@ -51,7 +51,7 @@ const main = async () => {
     EthPoolRound,
     [
       `${selectedChain.nativeToken.address}`,
-      `${selectedChain.manager.address}`,
+      `${selectedChain.managerToken.address}`,
       'ETH',
       'ETH',
     ],

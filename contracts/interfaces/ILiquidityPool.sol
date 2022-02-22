@@ -65,4 +65,5 @@ interface ILiquidityPool {
 
     // @notice Unpause deposits only on the pool.
     function unpauseDeposit() external;
+
 }
