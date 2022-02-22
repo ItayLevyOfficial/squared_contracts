@@ -1,51 +1,25 @@
 const { ethers, upgrades } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 
-const main = async () => {
+const deployPool = async (selectedChain, tokenName) => {
   const PoolRound = await ethers.getContractFactory('Pool')
 
-  const sqrdRound = await upgrades.deployProxy(
+  const poolRound = await upgrades.deployProxy(
     PoolRound,
     [
-      `${selectedChain.sqrdToken.address}`,
+      `${selectedChain.address}`,
       `${selectedChain.managerToken.address}`,
-      'SQRD',
-      'SQRD',
+      `${tokenName}`,
+      `${tokenName}`,
     ],
     { initializer: 'initialize' }
   )
-  await sqrdRound.deployed()
-  const sqrdcontractAddress = (await sqrdRound.deployed()).address
-  console.log('SQRD Contract:', sqrdcontractAddress)
+  await poolRound.deployed()
+  const poolContractAddress = (await poolRound.deployed()).address
+  console.log(`${tokenName} Contract:`, poolContractAddress)
+}
 
-  const sqrdLpRound = await upgrades.deployProxy(
-    PoolRound,
-    [
-      `${selectedChain.sqrdLpToken.address}`,
-      `${selectedChain.managerToken.address}`,
-      'SQRD_LP',
-      'SQRD_LP',
-    ],
-    { initializer: 'initialize' }
-  )
-  await sqrdLpRound.deployed()
-  const sqrdLpcontractAddress = (await sqrdLpRound.deployed()).address
-  console.log('SQRD LP Contract:', sqrdLpcontractAddress)
-
-  const usdcRound = await upgrades.deployProxy(
-    PoolRound,
-    [
-      `${selectedChain.stableToken.address}`,
-      `${selectedChain.managerToken.address}`,
-      'USDC',
-      'USDC',
-    ],
-    { initializer: 'initialize' }
-  )
-  await usdcRound.deployed()
-  const usdcContractAddress = (await usdcRound.deployed()).address
-  console.log('USDC Contract:', usdcContractAddress)
-
+const deployEthPool = async () => {
   const EthPoolRound = await ethers.getContractFactory('EthPool')
   const ethPoolRound = await upgrades.deployProxy(
     EthPoolRound,
@@ -62,4 +36,7 @@ const main = async () => {
   console.log('ETH Contract:', ethContractAddress)
 }
 
-main()
+deployPool(selectedChain.sqrdToken, 'SQRD')
+deployPool(selectedChain.sqrdLpToken, 'SQRD_LP')
+deployPool(selectedChain.stableToken, 'USDC')
+deployEthPool()
