@@ -21,8 +21,19 @@ const main = async () => {
     erc20abi,
     signer
   )
-
+  const sqrdCoinContract = new Contract(
+    selectedChain.sqrdToken.address,
+    erc20abi,
+    signer
+  )
+  const sqrdLpCoinContract = new Contract(
+    selectedChain.sqrdLpToken.address,
+    erc20abi,
+    signer
+  )
   await stableCoinContract.gimmeSome()
+  await sqrdCoinContract.gimmeSome()
+  await sqrdLpCoinContract.gimmeSome()
   await network.provider.request({
     method: 'hardhat_stopImpersonatingAccount',
     params: [myMetamaskWalletAddress],

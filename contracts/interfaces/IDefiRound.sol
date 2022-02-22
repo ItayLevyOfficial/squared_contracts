@@ -132,8 +132,6 @@ interface IDefiRound {
     /// @return value the value of the account in USD
     function accountBalance(address account) external view returns (uint256 value);
 
-
-
     function accountToken(address account) external view returns (address token);
 
 
