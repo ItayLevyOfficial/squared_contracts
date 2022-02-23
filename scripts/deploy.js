@@ -10,9 +10,8 @@ const deployContract = async ({ contractName, params = [] }) => {
   return deployedContract
 }
 
-const deployPool = async (token, poolName = 'Pool') => {
+const deployPool = async ({token, poolName = 'Pool'}) => {
   const PoolRound = await ethers.getContractFactory(poolName)
-
   const poolRound = await upgrades.deployProxy(
     PoolRound,
     [
@@ -39,11 +38,12 @@ const main = async () => {
   })
   await supportNativeToken(deployedContract)
   await supportStableToken(deployedContract)
-
-  deployPool({ token: selectedChain.nativeToken, poolName: 'EthPool' })
-  deployPool({ token: selectedChain.stableToken })
-  deployPool({ token: selectedChain.sqrdToken })
-  deployPool({ token: selectedChain.sqrdLpToken })
+  console.log("a");
+  await deployPool({ token: selectedChain.nativeToken, poolName: 'EthPool' })
+  console.log("b");
+  await deployPool({ token: selectedChain.stableToken })
+  await deployPool({ token: selectedChain.sqrdToken })
+  await deployPool({ token: selectedChain.sqrdLpToken })
 }
 
 main()
