@@ -6,8 +6,26 @@ const deployContract = async ({ contractName, params = [] }) => {
   const contract = await ethers.getContractFactory(contractName)
   const deployedContract = await contract.deploy(...params)
   const deployedContractAddress = (await deployedContract.deployed()).address
-  console.table({ contractName: deployedContractAddress })
+  console.table({ [contractName]: deployedContractAddress })
   return deployedContract
+}
+
+const deployPool = async (token, poolName = 'Pool') => {
+  const PoolRound = await ethers.getContractFactory(poolName)
+
+  const poolRound = await upgrades.deployProxy(
+    PoolRound,
+    [
+      `${token.address}`,
+      `${selectedChain.managerToken.address}`,
+      `${token.name}`,
+      `${token.name}`,
+    ],
+    { initializer: 'initialize' },
+  )
+  await poolRound.deployed()
+  const poolContractAddress = (await poolRound.deployed()).address
+  console.table({ [`${token.name} pool`]: poolContractAddress })
 }
 
 const main = async () => {
@@ -22,45 +40,10 @@ const main = async () => {
   await supportNativeToken(deployedContract)
   await supportStableToken(deployedContract)
 
-  const deployPool = async (token, poolName = 'Pool') => {
-    const PoolRound = await ethers.getContractFactory(poolName)
-
-    const poolRound = await upgrades.deployProxy(
-      PoolRound,
-      [
-        `${token.address}`,
-        `${selectedChain.managerToken.address}`,
-        `${tokenName}`,
-        `${tokenName}`,
-      ],
-      { initializer: 'initialize' },
-    )
-    await poolRound.deployed()
-    const poolContractAddress = (await poolRound.deployed()).address
-    console.table({ [`${tokenName} pool`]: poolContractAddress })
-  }
-
-  // const deployEthPool = async () => {
-  //   const EthPoolRound = await ethers.getContractFactory('EthPool')
-  //   const ethPoolRound = await upgrades.deployProxy(
-  //     EthPoolRound,
-  //     [
-  //       `${selectedChain.nativeToken.address}`,
-  //       `${selectedChain.managerToken.address}`,
-  //       'ETH',
-  //       'ETH',
-  //     ],
-  //     { initializer: 'initialize' },
-  //   )
-  //   await ethPoolRound.deployed()
-  //   const ethContractAddress = (await ethPoolRound.deployed()).address
-  //   console.log('ETH Contract:', ethContractAddress)
-  // }
-
-  deployPool({})
-  deployPool(selectedChain.stableToken, 'USDC')
-  deployPool(selectedChain.sqrdToken, 'SQRD')
-  deployPool(selectedChain.sqrdLpToken, 'SQRD_LP')
+  deployPool({ token: selectedChain.nativeToken, poolName: 'EthPool' })
+  deployPool({ token: selectedChain.stableToken })
+  deployPool({ token: selectedChain.sqrdToken })
+  deployPool({ token: selectedChain.sqrdLpToken })
 }
 
 main()
