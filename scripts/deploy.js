@@ -1,4 +1,4 @@
-const { ethers } = require('hardhat')
+const { ethers, upgrades } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 const { supportNativeToken, supportStableToken } = require('../test/utils')
 
@@ -12,12 +12,52 @@ const main = async () => {
   const defiRound = await DefiRound.deploy(
     selectedChain.nativeToken.address,
     treasury,
-    maxTotalValue,
+    maxTotalValue
   )
   const contractAddress = (await defiRound.deployed()).address
-  console.table({ contractAddress })
+  console.log('Launch Contract:', contractAddress)
   await supportNativeToken(defiRound)
   await supportStableToken(defiRound)
+
+  const deployPool = async (chain, tokenName) => {
+    const PoolRound = await ethers.getContractFactory('Pool')
+
+    const poolRound = await upgrades.deployProxy(
+      PoolRound,
+      [
+        `${chain.address}`,
+        `${selectedChain.managerToken.address}`,
+        `${tokenName}`,
+        `${tokenName}`,
+      ],
+      { initializer: 'initialize' }
+    )
+    await poolRound.deployed()
+    const poolContractAddress = (await poolRound.deployed()).address
+    console.log(`${tokenName} Contract:`, poolContractAddress)
+  }
+
+  const deployEthPool = async () => {
+    const EthPoolRound = await ethers.getContractFactory('EthPool')
+    const ethPoolRound = await upgrades.deployProxy(
+      EthPoolRound,
+      [
+        `${selectedChain.nativeToken.address}`,
+        `${selectedChain.managerToken.address}`,
+        'ETH',
+        'ETH',
+      ],
+      { initializer: 'initialize' }
+    )
+    await ethPoolRound.deployed()
+    const ethContractAddress = (await ethPoolRound.deployed()).address
+    console.log('ETH Contract:', ethContractAddress)
+  }
+
+  deployEthPool()
+  deployPool(selectedChain.stableToken, 'USDC')
+  deployPool(selectedChain.sqrdToken, 'SQRD')
+  deployPool(selectedChain.sqrdLpToken, 'SQRD_LP')
 }
 
 main()
