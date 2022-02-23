@@ -7,6 +7,6 @@ const main = async (contract) => {
   console.log(`${contract} address:`, poolContractAddress)
 }
 
-main('FakeSQRDLP')
-main('FakeSQRD')
 main('FakeUSDC')
+main('FakeSQRD')
+main('FakeSQRDLP')
