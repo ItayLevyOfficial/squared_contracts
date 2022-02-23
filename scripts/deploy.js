@@ -28,8 +28,8 @@ const deployPool = async ({ token, poolName = 'Pool' }) => {
 }
 
 const main = async () => {
-  deployContract({ contractName: 'FakeSQRD' })
-  deployContract({ contractName: 'FakeSQRDLP' })
+  await deployContract({ contractName: 'FakeSQRD' })
+  await deployContract({ contractName: 'FakeSQRDLP' })
   await deployContract({ contractName: 'FakeUSDC' })
   const treasuryAddress = ethers.Wallet.createRandom().address
   // Need extra 8 zeros for the decimals.

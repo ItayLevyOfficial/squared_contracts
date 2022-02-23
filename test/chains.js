@@ -7,14 +7,14 @@ const chains = {
       name: 'ETH'
     },
     stableToken: {
-      address: '0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849',
+      address: '0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8',
       chainlinkAddress: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
       decimals: 6,
       slot: 9, // To update the balance manually on hardhat network
       name: 'USDC'
     },
     sqrdToken: {
-      address: '0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8',
+      address: '0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849',
       decimals: 6,
       slot: 9, // To update the balance manually on hardhat network
       name: 'SQRD'
