@@ -10,7 +10,7 @@ const deployContract = async ({ contractName, params = [] }) => {
   return deployedContract
 }
 
-const deployPool = async ({token, poolName = 'Pool'}) => {
+const deployPool = async ({ token, poolName = 'Pool' }) => {
   const PoolRound = await ethers.getContractFactory(poolName)
   const poolRound = await upgrades.deployProxy(
     PoolRound,
@@ -28,6 +28,8 @@ const deployPool = async ({token, poolName = 'Pool'}) => {
 }
 
 const main = async () => {
+  deployContract({ contractName: 'FakeSQRD' })
+  deployContract({ contractName: 'FakeSQRDLP' })
   await deployContract({ contractName: 'FakeUSDC' })
   const treasuryAddress = ethers.Wallet.createRandom().address
   // Need extra 8 zeros for the decimals.
@@ -38,9 +40,9 @@ const main = async () => {
   })
   await supportNativeToken(deployedContract)
   await supportStableToken(deployedContract)
-  console.log("a");
+  console.log('a')
   await deployPool({ token: selectedChain.nativeToken, poolName: 'EthPool' })
-  console.log("b");
+  console.log('b')
   await deployPool({ token: selectedChain.stableToken })
   await deployPool({ token: selectedChain.sqrdToken })
   await deployPool({ token: selectedChain.sqrdLpToken })
