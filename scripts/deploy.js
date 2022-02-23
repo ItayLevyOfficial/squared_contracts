@@ -2,6 +2,13 @@ const { ethers, upgrades } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 const { supportNativeToken, supportStableToken } = require('../test/utils')
 
+const deployContract = async ({ contractName }) => {
+  const contract = await ethers.getContractFactory(contractName)
+  const deployedContract = await contract.deploy()
+  const deployedContractAddress = (await deployedContract.deployed()).address
+  console.table({ contractName: deployedContractAddress })
+}
+
 const main = async () => {
   const DefiRound = await ethers.getContractFactory('DefiRound')
   const treasuryWallet = ethers.Wallet.createRandom()
@@ -12,7 +19,7 @@ const main = async () => {
   const defiRound = await DefiRound.deploy(
     selectedChain.nativeToken.address,
     treasury,
-    maxTotalValue
+    maxTotalValue,
   )
   const contractAddress = (await defiRound.deployed()).address
   console.log('Launch Contract:', contractAddress)
@@ -30,7 +37,7 @@ const main = async () => {
         `${tokenName}`,
         `${tokenName}`,
       ],
-      { initializer: 'initialize' }
+      { initializer: 'initialize' },
     )
     await poolRound.deployed()
     const poolContractAddress = (await poolRound.deployed()).address
@@ -47,7 +54,7 @@ const main = async () => {
         'ETH',
         'ETH',
       ],
-      { initializer: 'initialize' }
+      { initializer: 'initialize' },
     )
     await ethPoolRound.deployed()
     const ethContractAddress = (await ethPoolRound.deployed()).address
