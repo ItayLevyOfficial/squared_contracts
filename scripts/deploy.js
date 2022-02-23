@@ -2,29 +2,24 @@ const { ethers, upgrades } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 const { supportNativeToken, supportStableToken } = require('../test/utils')
 
-const deployContract = async ({ contractName }) => {
+const deployContract = async ({ contractName, params }) => {
   const contract = await ethers.getContractFactory(contractName)
-  const deployedContract = await contract.deploy()
+  const deployedContract = await contract.deploy(...params)
   const deployedContractAddress = (await deployedContract.deployed()).address
   console.table({ contractName: deployedContractAddress })
+  return deployedContract
 }
 
 const main = async () => {
-  const DefiRound = await ethers.getContractFactory('DefiRound')
-  const treasuryWallet = ethers.Wallet.createRandom()
-  const treasury = treasuryWallet.address
+  const treasuryAddress = ethers.Wallet.createRandom().address
   // Need extra 8 zeros for the decimals.
   const maxTotalValue = 100_000_00000000
-
-  const defiRound = await DefiRound.deploy(
-    selectedChain.nativeToken.address,
-    treasury,
-    maxTotalValue,
-  )
-  const contractAddress = (await defiRound.deployed()).address
-  console.log('Launch Contract:', contractAddress)
-  await supportNativeToken(defiRound)
-  await supportStableToken(defiRound)
+  const deployedContract = await deployContract({
+    contractName: 'DefiRound',
+    params: [selectedChain.nativeToken.address, treasuryAddress, maxTotalValue]
+  })
+  await supportNativeToken(deployedContract)
+  await supportStableToken(deployedContract)
 
   const deployPool = async (chain, tokenName) => {
     const PoolRound = await ethers.getContractFactory('Pool')
