@@ -4,9 +4,9 @@ const { supportNativeToken, supportStableToken } = require('../test/utils')
 
 const deployContract = async ({ contractName, params = [] }) => {
   const contract = await ethers.getContractFactory(contractName)
-  const deployedContract = await contract.deploy(...params)
-  const deployedContractAddress = (await deployedContract.deployed()).address
-  console.table({ [contractName]: deployedContractAddress })
+  const deployedContractFn = await contract.deploy(...params)
+  const deployedContract = (await deployedContractFn.deployed())
+  console.table({ [contractName]: deployedContract.address })
   return deployedContract
 }
 
@@ -28,9 +28,9 @@ const deployPool = async ({ token, poolName = 'Pool' }) => {
 }
 
 const main = async () => {
-  deployContract({ contractName: 'FakeSQRD' })
-  deployContract({ contractName: 'FakeSQRDLP' })
-  await deployContract({ contractName: 'FakeUSDC' })
+  const fakeSQRD = await deployContract({ contractName: 'FakeSQRD' })
+  const FakeSQRDLP = await deployContract({ contractName: 'FakeSQRDLP' })
+  const FakeUSDC = await deployContract({ contractName: 'FakeUSDC' })
   const treasuryAddress = ethers.Wallet.createRandom().address
   // Need extra 8 zeros for the decimals.
   const maxTotalValue = 100_000_00000000
