@@ -1,5 +1,7 @@
 const { ethers } = require('hardhat')
 
+
+
 const main = async () => {
   const myWalletAddresses = [
     '0x909974E1fB15543A7f539aF1981ae500720727A1',
@@ -8,7 +10,8 @@ const main = async () => {
   const randomWalletAddresses = Array.apply(null, Array(8)).map(
     () => ethers.Wallet.createRandom().address,
   )
-  console.log({ randomWalletAddresses, myWalletAddresses })
+  const whiteListedAddresses = [...randomWalletAddresses, ...myWalletAddresses]
+  const hashedAddresses = 
 }
 
 main()

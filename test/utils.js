@@ -50,10 +50,17 @@ const deployLaunchContract = async () => {
   )
 }
 
+const hashAddress = (address) =>
+  Buffer.from(
+    ethers.utils.solidityKeccak256(['address'], [address]).slice(2),
+    'hex',
+  )
+
 module.exports = {
   ethPrice,
   maxTotalValue,
   deployLaunchContract,
   supportNativeToken,
   supportStableToken,
+  hashAddress
 }
