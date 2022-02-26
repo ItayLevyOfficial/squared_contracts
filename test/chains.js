@@ -1,5 +1,6 @@
 const chains = {
   ethereum: {
+    launchContractAddress: '0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55',
     nativeToken: {
       address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
       chainlinkAddress: '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419',
