@@ -45,7 +45,7 @@ const main = async () => {
   })
   await deployPool({
     tokenName: selectedChain.nativeToken.name,
-    tokenAddress: selectedChain.token.address,
+    tokenAddress: selectedChain.nativeToken.address,
     poolName: 'EthPool',
   })
   await deployPool({
