@@ -1,22 +1,18 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { MerkleTree } = require('merkletreejs')
 const { selectedChain } = require('./chains')
 const {
   hashAddress,
   deployLaunchContract,
   supportNativeToken,
+  configureHashedWhitelist,
 } = require('./utils')
 
 let defiRound
 
 const configureWhiteList = async (allowedUsers) => {
   const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
-  const tree = new MerkleTree(enabledUsersHashes, hashAddress, { sort: true })
-  const root = tree.getRoot()
-  const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
-  await tx.wait()
-  return tree
+  configureHashedWhitelist(enabledUsersHashes, defiRound)
 }
 
 describe('Deposit function', function () {
