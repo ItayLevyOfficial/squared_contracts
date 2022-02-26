@@ -43,10 +43,23 @@ const main = async () => {
     defiRoundContract: deployedContract,
     stableTokenAddress: fakeUSDC.address,
   })
-  await deployPool({ tokenName: selectedChain.nativeToken.name, tokenAddress: selectedChain.token.address, poolName: 'EthPool' })
-  await deployPool({ tokenName: selectedChain.stableToken.name, tokenAddress: fakeUSDC.address })
-  await deployPool({ tokenName: selectedChain.sqrdToken.name, tokenAddress: fakeSQRD.address})
-  await deployPool({ tokenName: selectedChain.sqrdLpToken.name, tokenAddress: fakeSQRDLP.address})
+  await deployPool({
+    tokenName: selectedChain.nativeToken.name,
+    tokenAddress: selectedChain.token.address,
+    poolName: 'EthPool',
+  })
+  await deployPool({
+    tokenName: selectedChain.stableToken.name,
+    tokenAddress: fakeUSDC.address,
+  })
+  await deployPool({
+    tokenName: selectedChain.sqrdToken.name,
+    tokenAddress: fakeSQRD.address,
+  })
+  await deployPool({
+    tokenName: selectedChain.sqrdLpToken.name,
+    tokenAddress: fakeSQRDLP.address,
+  })
 }
 
 main()
