@@ -1,6 +1,5 @@
 const { ethers } = require('hardhat')
-
-
+const { hashAddress } = require('../test/utils')
 
 const main = async () => {
   const myWalletAddresses = [
@@ -11,7 +10,8 @@ const main = async () => {
     () => ethers.Wallet.createRandom().address,
   )
   const whiteListedAddresses = [...randomWalletAddresses, ...myWalletAddresses]
-  const hashedAddresses = 
+  const hashedAddresses = whiteListedAddresses.map(hashAddress)
+  console.log();
 }
 
 main()
