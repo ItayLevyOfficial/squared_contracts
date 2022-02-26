@@ -7,13 +7,17 @@ const maxTotalValue = ethPrice * 10
 const formatNumber = (number, decimals) =>
   BigNumber.from(number).mul(BigNumber.from(10).pow(BigNumber.from(decimals)))
 
-const supportStableToken = async (defiRound) => {
+const supportStableToken = async ({
+  defiRoundContract,
+  // Need this param for the deploy script, which generates different stable token addresses each run.
+  stableTokenAddress = selectedChain.stableToken.address,
+}) => {
   const stableToken = selectedChain.stableToken
   const genesisPoolAddress = ethers.Wallet.createRandom().address
 
-  await defiRound.addSupportedTokens([
+  await defiRoundContract.addSupportedTokens([
     {
-      token: stableToken.address,
+      token: stableTokenAddress,
       oracle: stableToken.chainlinkAddress,
       genesis: genesisPoolAddress,
       maxLimit: formatNumber(100_000, stableToken.decimals),
@@ -51,5 +55,5 @@ module.exports = {
   maxTotalValue,
   deployLaunchContract,
   supportNativeToken,
-  supportStableToken
+  supportStableToken,
 }
