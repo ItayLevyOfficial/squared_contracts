@@ -10,21 +10,21 @@ const deployContract = async ({ contractName, params = [] }) => {
   return deployedContract
 }
 
-const deployPool = async ({ token, poolName = 'Pool' }) => {
+const deployPool = async ({ tokenName, tokenAddress, poolName = 'Pool' }) => {
   const PoolRound = await ethers.getContractFactory(poolName)
   const poolRound = await upgrades.deployProxy(
     PoolRound,
     [
-      `${token.address}`,
+      `${tokenAddress}`,
       `${selectedChain.managerToken.address}`,
-      `${token.name}`,
-      `${token.name}`,
+      `${tokenName}`,
+      `${tokenName}`,
     ],
     { initializer: 'initialize' },
   )
   await poolRound.deployed()
   const poolContractAddress = (await poolRound.deployed()).address
-  console.table({ [`${token.name} pool`]: poolContractAddress })
+  console.table({ [`${tokenName} pool`]: poolContractAddress })
 }
 
 const main = async () => {
