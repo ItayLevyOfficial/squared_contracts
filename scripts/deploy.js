@@ -29,8 +29,8 @@ const deployPool = async ({ tokenName, tokenAddress, poolName = 'Pool' }) => {
 
 const main = async () => {
   const fakeSQRD = await deployContract({ contractName: 'FakeSQRD' })
-  const FakeSQRDLP = await deployContract({ contractName: 'FakeSQRDLP' })
-  const FakeUSDC = await deployContract({ contractName: 'FakeUSDC' })
+  const fakeSQRDLP = await deployContract({ contractName: 'FakeSQRDLP' })
+  const fakeUSDC = await deployContract({ contractName: 'FakeUSDC' })
   const treasuryAddress = ethers.Wallet.createRandom().address
   // Need extra 8 zeros for the decimals.
   const maxTotalValue = 100_000_00000000
@@ -41,12 +41,12 @@ const main = async () => {
   await supportNativeToken(deployedContract)
   await supportStableToken({
     defiRoundContract: deployedContract,
-    stableTokenAddress: FakeUSDC.address,
+    stableTokenAddress: fakeUSDC.address,
   })
-  await deployPool({ token: selectedChain.nativeToken, poolName: 'EthPool' })
-  await deployPool({ token: selectedChain.stableToken })
-  await deployPool({ token: selectedChain.sqrdToken })
-  await deployPool({ token: selectedChain.sqrdLpToken })
+  await deployPool({ tokenName: selectedChain.nativeToken.name, tokenAddress: selectedChain.token.address, poolName: 'EthPool' })
+  await deployPool({ tokenName: selectedChain.stableToken.name, tokenAddress: fakeUSDC.address })
+  await deployPool({ tokenName: selectedChain.sqrdToken.name, tokenAddress: fakeSQRD.address})
+  await deployPool({ tokenName: selectedChain.sqrdLpToken.name, tokenAddress: fakeSQRDLP.address})
 }
 
 main()
