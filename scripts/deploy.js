@@ -5,7 +5,7 @@ const { supportNativeToken, supportStableToken } = require('../test/utils')
 const deployContract = async ({ contractName, params = [] }) => {
   const contract = await ethers.getContractFactory(contractName)
   const deployedContractFn = await contract.deploy(...params)
-  const deployedContract = (await deployedContractFn.deployed())
+  const deployedContract = await deployedContractFn.deployed()
   console.table({ [contractName]: deployedContract.address })
   return deployedContract
 }
@@ -39,7 +39,10 @@ const main = async () => {
     params: [selectedChain.nativeToken.address, treasuryAddress, maxTotalValue],
   })
   await supportNativeToken(deployedContract)
-  await supportStableToken(deployedContract)
+  await supportStableToken({
+    defiRoundContract: deployedContract,
+    stableTokenAddress: FakeUSDC.address,
+  })
   await deployPool({ token: selectedChain.nativeToken, poolName: 'EthPool' })
   await deployPool({ token: selectedChain.stableToken })
   await deployPool({ token: selectedChain.sqrdToken })
