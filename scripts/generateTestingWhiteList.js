@@ -11,7 +11,7 @@ const main = async () => {
   )
   const whiteListedAddresses = [...randomWalletAddresses, ...myWalletAddresses]
   const hashedAddresses = whiteListedAddresses.map(hashAddress)
-  console.log();
+  console.log({ hashedAddresses })
 }
 
 main()
