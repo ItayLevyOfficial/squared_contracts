@@ -12,7 +12,7 @@ let defiRound
 
 const configureWhiteList = async (allowedUsers) => {
   const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
-  configureHashedWhitelist(enabledUsersHashes, defiRound)
+  return configureHashedWhitelist(enabledUsersHashes, defiRound)
 }
 
 describe('Deposit function', function () {
