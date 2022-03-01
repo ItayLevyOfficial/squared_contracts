@@ -1,23 +1,18 @@
 const { expect } = require('chai')
 const { ethers } = require('hardhat')
-const { MerkleTree } = require('merkletreejs')
 const { selectedChain } = require('./chains')
-const { deployLaunchContract, supportNativeToken } = require('./utils')
+const {
+  hashAddress,
+  deployLaunchContract,
+  supportNativeToken,
+  configureHashedWhitelist,
+} = require('./utils')
 
-const hashAddress = (address) =>
-  Buffer.from(
-    ethers.utils.solidityKeccak256(['address'], [address]).slice(2),
-    'hex',
-  )
 let defiRound
 
 const configureWhiteList = async (allowedUsers) => {
   const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
-  const tree = new MerkleTree(enabledUsersHashes, hashAddress, { sort: true })
-  const root = tree.getRoot()
-  const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
-  await tx.wait()
-  return tree
+  return configureHashedWhitelist(enabledUsersHashes, defiRound)
 }
 
 describe('Deposit function', function () {
@@ -32,9 +27,13 @@ describe('Deposit function', function () {
   it('Should deposit funds successfully', async () => {
     const amountToDeposit = ethers.utils.parseEther('0.5')
     await supportNativeToken(defiRound)
-    await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
-      value: amountToDeposit,
-    })
+    await defiRound.deposit(
+      { token: selectedChain.nativeToken.address, amount: amountToDeposit },
+      [],
+      {
+        value: amountToDeposit,
+      },
+    )
   })
 
   it('Should deposit funds successfully & verify the evm state', async () => {
@@ -78,9 +77,13 @@ describe('Deposit function', function () {
     await supportNativeToken(defiRound)
 
     await expect(
-      defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, proof, {
-        value: amountToDeposit,
-      }),
+      defiRound.deposit(
+        { token: selectedChain.nativeToken.address, amount: amountToDeposit },
+        proof,
+        {
+          value: amountToDeposit,
+        },
+      ),
     ).to.be.revertedWith('PROOF_INVALID')
   })
 
@@ -113,9 +116,13 @@ describe('Deposit function', function () {
 
   it('Should verify the contract state after two deposits', async () => {
     const depositFunds = async (amountToDeposit) => {
-      await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
-        value: amountToDeposit,
-      })
+      await defiRound.deposit(
+        { token: selectedChain.nativeToken.address, amount: amountToDeposit },
+        [],
+        {
+          value: amountToDeposit,
+        },
+      )
     }
     const amountToDeposit = ethers.utils.parseEther('0.000005')
     const [owner] = await ethers.getSigners()
@@ -138,14 +145,25 @@ describe('Deposit function', function () {
   it('Should reach the maxTotalValue great', async () => {
     const amountToDeposit = ethers.utils.parseEther('10.1')
     await supportNativeToken(defiRound)
-    await defiRound.deposit({ token: selectedChain.nativeToken.address, amount: amountToDeposit }, [], {
-      value: amountToDeposit,
-    })
+    await defiRound.deposit(
+      { token: selectedChain.nativeToken.address, amount: amountToDeposit },
+      [],
+      {
+        value: amountToDeposit,
+      },
+    )
     const secondAmountToDeposit = ethers.utils.parseEther('0.1')
     await expect(
-      defiRound.deposit({ token: selectedChain.nativeToken.address, amount: secondAmountToDeposit }, [], {
-        value: secondAmountToDeposit,
-      }),
+      defiRound.deposit(
+        {
+          token: selectedChain.nativeToken.address,
+          amount: secondAmountToDeposit,
+        },
+        [],
+        {
+          value: secondAmountToDeposit,
+        },
+      ),
     ).to.be.revertedWith('DEPOSITS_LOCKED')
   })
 })

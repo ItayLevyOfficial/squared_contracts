@@ -3,6 +3,7 @@ const { ethers } = require('hardhat')
 const { selectedChain } = require('./chains')
 const ethPrice = 2599_46882140
 const maxTotalValue = ethPrice * 10
+const { MerkleTree } = require('merkletreejs')
 
 const formatNumber = (number, decimals) =>
   BigNumber.from(number).mul(BigNumber.from(10).pow(BigNumber.from(decimals)))
@@ -50,10 +51,26 @@ const deployLaunchContract = async () => {
   )
 }
 
+const hashAddress = (address) =>
+  Buffer.from(
+    ethers.utils.solidityKeccak256(['address'], [address]).slice(2),
+    'hex',
+  )
+
+const configureHashedWhitelist = async (hashedAddresses, defiRound) => {
+  const tree = new MerkleTree(hashedAddresses, hashAddress, { sort: true })
+  const root = tree.getRoot()
+  const tx = await defiRound.configureWhitelist({ enabled: true, root: root })
+  await tx.wait()
+  return tree
+}
+
 module.exports = {
   ethPrice,
   maxTotalValue,
   deployLaunchContract,
   supportNativeToken,
   supportStableToken,
+  hashAddress,
+  configureHashedWhitelist,
 }
