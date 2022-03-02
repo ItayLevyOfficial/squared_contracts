@@ -1,4 +1,4 @@
-const { configureWhitelist } = require('../test/utils')
+const { configureWhiteList } = require('../test/utils')
 const { ethers } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 
@@ -17,7 +17,7 @@ const main = async () => {
   ]
   const MyContract = await ethers.getContractFactory('DefiRound')
   const defiRound = await MyContract.attach(selectedChain.launchContractAddress)
-  await configureWhitelist(whitelistUsers, defiRound)
+  await configureWhiteList(whitelistUsers, defiRound)
  } 
 
 main()
