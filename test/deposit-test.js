@@ -5,15 +5,11 @@ const {
   hashAddress,
   deployLaunchContract,
   supportNativeToken,
-  configureHashedWhitelist,
+  configureWhiteList
 } = require('./utils')
 
 let defiRound
 
-const configureWhiteList = async (allowedUsers) => {
-  const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
-  return configureHashedWhitelist(enabledUsersHashes, defiRound)
-}
 
 describe('Deposit function', function () {
   beforeEach(async () => {
@@ -58,7 +54,7 @@ describe('Deposit function', function () {
     const address1 = ethers.Wallet.createRandom().address
     const address2 = ethers.Wallet.createRandom().address
     const enabledUsers = [owner.address, address1, address2]
-    const tree = await configureWhiteList(enabledUsers)
+    const tree = await configureWhiteList(enabledUsers, defiRound)
     const whitelistSettings = await defiRound.whitelistSettings()
     const root = whitelistSettings.root
     const isEnabled = whitelistSettings.enabled
@@ -71,7 +67,7 @@ describe('Deposit function', function () {
     const amountToDeposit = ethers.utils.parseEther('0.5')
     const address1 = ethers.Wallet.createRandom().address
     const enabledUsers = [address1]
-    const tree = await configureWhiteList(enabledUsers)
+    const tree = await configureWhiteList(enabledUsers, defiRound)
     const [owner] = await ethers.getSigners()
     const proof = tree.getProof(owner.address)
     await supportNativeToken(defiRound)
@@ -95,7 +91,7 @@ describe('Deposit function', function () {
     const [owner] = await ethers.getSigners()
     const currentAddress = owner.address
     const enabledUsers = [currentAddress, address1]
-    const tree = await configureWhiteList(enabledUsers)
+    const tree = await configureWhiteList(enabledUsers, defiRound)
     const proofObj = tree
       .getProof(hashAddress(owner.address))
       .map((pr) => pr.data)

@@ -65,7 +65,13 @@ const configureHashedWhitelist = async (hashedAddresses, defiRound) => {
   return tree
 }
 
+const configureWhiteList = async (allowedUsers, defiRound) => {
+  const enabledUsersHashes = allowedUsers.map((user) => hashAddress(user))
+  return configureHashedWhitelist(enabledUsersHashes, defiRound)
+}
+
 module.exports = {
+  configureWhiteList,
   ethPrice,
   maxTotalValue,
   deployLaunchContract,
