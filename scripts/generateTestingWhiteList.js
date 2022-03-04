@@ -10,6 +10,7 @@ const main = async () => {
     () => ethers.Wallet.createRandom().address,
   )
   const whiteListedAddresses = [...randomWalletAddresses, ...myWalletAddresses]
+  console.log({ whiteListedAddresses })
   const hashedAddresses = whiteListedAddresses.map(hashAddress)
   console.log({ hashedAddresses: JSON.stringify(hashedAddresses) })
 }
