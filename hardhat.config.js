@@ -21,6 +21,12 @@ const testingPrivateKey = `316b96b8525029746b7283e51634e70b2339f38d7e005652c56aa
  */
 module.exports = {
   solidity: {
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
     compilers: [
       {
         version: '0.6.11',
@@ -46,12 +52,6 @@ module.exports = {
     harmonyTestnet: {
       url: `https://api.s0.b.hmny.io/`,
       accounts: [testingPrivateKey],
-      settings: {
-        optimizer: {
-          enabled: true,
-          runs: 200,
-        },
-      },
     },
   },
 }
