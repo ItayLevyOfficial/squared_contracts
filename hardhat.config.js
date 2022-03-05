@@ -46,6 +46,12 @@ module.exports = {
     harmonyTestnet: {
       url: `https://api.s0.b.hmny.io/`,
       accounts: [testingPrivateKey],
+      settings: {
+        optimizer: {
+          enabled: true,
+          runs: 200,
+        },
+      },
     },
   },
 }
