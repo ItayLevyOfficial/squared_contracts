@@ -14,6 +14,8 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
+const testingPrivateKey = `316b96b8525029746b7283e51634e70b2339f38d7e005652c56aa009a22f6404`
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
@@ -36,9 +38,14 @@ module.exports = {
       chainId: 1337,
       allowUnlimitedContractSize: true,
       forking: {
-        url: 'https://eth-mainnet.alchemyapi.io/v2/2wzUWNwC9bpWNB5tNUznTTL0yogzqamW',
+        url:
+          'https://eth-mainnet.alchemyapi.io/v2/2wzUWNwC9bpWNB5tNUznTTL0yogzqamW',
         blockNumber: 14101114,
       },
+    },
+    harmonyTestnet: {
+      url: `https://api.s0.b.hmny.io/`,
+      accounts: [testingPrivateKey],
     },
   },
 }
