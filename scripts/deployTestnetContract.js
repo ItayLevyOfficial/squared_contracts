@@ -5,7 +5,7 @@ const { deployContract } = require('./utils')
 
 const main = async () => {
   const treasuryAddress = ethers.Wallet.createRandom().address
-  // Need extra 8 zeros for the decimals.
+  // Need extra 8 zeros for the chainlink usd response decimals.
   const maxTotalValue = 100_000_00000000
   const deployedContract = await deployContract({
     contractName: 'DefiRound',
