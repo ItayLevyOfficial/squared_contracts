@@ -16,44 +16,30 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const testingPrivateKey = `316b96b8525029746b7283e51634e70b2339f38d7e005652c56aa009a22f6404`
 
+const optimizerSettings = {
+  optimizer: {
+    enabled: true,
+    runs: 1,
+  },
+}
+
 /**
  * @type import('hardhat/config').HardhatUserConfig
  */
 module.exports = {
   solidity: {
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 1,
-      },
-    },
     compilers: [
       {
         version: '0.6.11',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 1,
-          },
-        }
+        settings: optimizerSettings,
       },
       {
         version: '0.6.12',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 1,
-          },
-        }
+        settings: optimizerSettings,
       },
       {
         version: '0.7.6',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 1,
-          },
-        }
+        settings: optimizerSettings,
       },
     ],
   },
