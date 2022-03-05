@@ -7,10 +7,9 @@ const chains = {
       name: 'ONE',
     },
     stableToken: {
-      address: '0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849',
+      address: 'one1np293efrmv74xyjcz0kk3sn53x0fm745f2hsuc',
       chainlinkAddress: 'one1du4ag9v0wu0pyrfkjtz9adyzc9hsvl0vsscg5h',
       decimals: 6,
-      slot: 9, // To update the balance manually on hardhat network
       name: 'USDC',
     },
   },
