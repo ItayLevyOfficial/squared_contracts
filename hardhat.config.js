@@ -24,18 +24,36 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200,
+        runs: 1,
       },
     },
     compilers: [
       {
         version: '0.6.11',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1,
+          },
+        }
       },
       {
         version: '0.6.12',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1,
+          },
+        }
       },
       {
         version: '0.7.6',
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 1,
+          },
+        }
       },
     ],
   },
