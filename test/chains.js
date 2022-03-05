@@ -46,4 +46,4 @@ const chains = {
   },
 }
 
-module.exports = { selectedChain: chains.ethereum }
+module.exports = { selectedChain: chains.harmonyTestnet }

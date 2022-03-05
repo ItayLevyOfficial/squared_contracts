@@ -12,7 +12,10 @@ const main = async () => {
     params: [selectedChain.nativeToken.address, treasuryAddress, maxTotalValue],
   })
   await supportNativeToken(deployedContract)
-  await supportStableToken({ defiRoundContract: deployedContract })
+  await supportStableToken({
+    defiRoundContract: deployedContract,
+    stableTokenAddress: selectedChain.stableToken.address,
+  })
 }
 
 main()
