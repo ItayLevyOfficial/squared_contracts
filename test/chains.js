@@ -1,13 +1,13 @@
 const chains = {
   harmonyTestnet: {
     nativeToken: {
-      chainlinkAddress: 'one1emngd7ymcrdt4k26a2kfszhpm9aqwhadx06kmr',
+      chainlinkAddress: '0xcee686f89bc0dabad95aeaac980ae1d97a075fad',
       address: '0xcf664087a5bb0237a0bad6742852ec6c8d69a27a',
       decimals: 18,
       name: 'ONE',
     },
     stableToken: {
-      chainlinkAddress: 'one1du4ag9v0wu0pyrfkjtz9adyzc9hsvl0vsscg5h',
+      chainlinkAddress: '0x6f2bd4158f771e120d3692c45eb482c16f067dec',
       address: '0x985458e523db3d53125813ed68c274899e9dfab4',
       decimals: 6,
       name: 'USDC',
