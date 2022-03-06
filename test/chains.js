@@ -7,8 +7,8 @@ const chains = {
       name: 'ONE',
     },
     stableToken: {
-      chainlinkAddress: '0x6f2bd4158f771e120d3692c45eb482c16f067dec',
-      address: '0x985458e523db3d53125813ed68c274899e9dfab4',
+      chainlinkAddress: 'one1du4ag9v0wu0pyrfkjtz9adyzc9hsvl0vsscg5h',
+      address: 'one1np293efrmv74xyjcz0kk3sn53x0fm745f2hsuc',
       decimals: 6,
       name: 'USDC',
     },
