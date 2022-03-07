@@ -23,7 +23,7 @@ const chains = {
     },
     stableToken: {
       address: '0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849',
-      chainlinkAddress: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
+      chainlinkAddress: '0x9A37E1abFC430B9f5E204CA9294809c1AF37F697',
       decimals: 6,
       slot: 9, // To update the balance manually on hardhat network
       name: 'USDC',
