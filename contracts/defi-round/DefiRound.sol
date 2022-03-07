@@ -62,6 +62,12 @@ contract DefiRound is IDefiRound, Ownable {
         maxTotalValue = _maxTotalValue;
     }
 
+    function testChainlink() external view returns (uint256) {
+        address token = supportedTokens.at(0);
+        uint256 tokenBalance = IERC20(token).balanceOf(address(this));
+        return tokenBalance;
+    }
+    
     function deposit(TokenData calldata tokenInfo, bytes32[] memory proof) external payable override {
         require(currentStage == STAGES.STAGE_1, "DEPOSITS_NOT_ACCEPTED");
         require(!stage1Locked, "DEPOSITS_LOCKED");
