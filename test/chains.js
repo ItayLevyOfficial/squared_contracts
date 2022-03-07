@@ -1,7 +1,7 @@
 const chains = {
   harmonyTestnet: {
     nativeToken: {
-      chainlinkAddress: '0x4f11696cE92D78165E1F8A9a4192444087a45b64',
+      chainlinkAddress: '0xcEe686F89bc0dABAd95AEAAC980aE1d97A075FAD',
       address: '0xcf664087a5bb0237a0bad6742852ec6c8d69a27a',
       decimals: 18,
       name: 'ONE',
