@@ -80,6 +80,7 @@ contract DefiRound is IDefiRound, Ownable {
         if (token == WETH && msg.value > 0) {
             require(tokenAmount == msg.value, "INVALID_MSG_VALUE"); 
             IWETH(WETH).deposit{value: tokenAmount}();
+            emit Deposited(msg.sender, tokenInfo);
         } else {
             require(msg.value == 0, "NO_ETH");
         }
@@ -101,11 +102,10 @@ contract DefiRound is IDefiRound, Ownable {
         if (!(token == WETH && msg.value > 0)) {
             IERC20(token).safeTransferFrom(msg.sender, address(this), tokenAmount);    
         }
-        
+        emit Deposited(msg.sender, tokenInfo);        
         if(_totalValue() > maxTotalValue) {
             stage1Locked = true;
         }
-
         emit Deposited(msg.sender, tokenInfo);
     }
 
