@@ -1,14 +1,14 @@
 const chains = {
   harmonyTestnet: {
     nativeToken: {
-      chainlinkAddress: '0xcee686f89bc0dabad95aeaac980ae1d97a075fad',
-      address: '0xcf664087a5bb0237a0bad6742852ec6c8d69a27a',
+      chainlinkAddress: '0x4f11696cE92D78165E1F8A9a4192444087a45b64',
+      address: '0x7466d7d0c21fa05f32f5a0fa27e12bdc06348ce2',
       decimals: 18,
       name: 'ONE',
     },
     stableToken: {
       chainlinkAddress: '0x6f2bd4158f771e120d3692c45eb482c16f067dec',
-      address: '0x985458e523db3d53125813ed68c274899e9dfab4',
+      address: '0xa62d9d5ce0295f58c8185c057c668262d6549d10',
       decimals: 6,
       name: 'USDC',
     },
@@ -23,7 +23,7 @@ const chains = {
     },
     stableToken: {
       address: '0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849',
-      chainlinkAddress: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
+      chainlinkAddress: '0x9A37E1abFC430B9f5E204CA9294809c1AF37F697',
       decimals: 6,
       slot: 9, // To update the balance manually on hardhat network
       name: 'USDC',

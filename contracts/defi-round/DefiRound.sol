@@ -101,11 +101,9 @@ contract DefiRound is IDefiRound, Ownable {
         if (!(token == WETH && msg.value > 0)) {
             IERC20(token).safeTransferFrom(msg.sender, address(this), tokenAmount);    
         }
-        
         if(_totalValue() > maxTotalValue) {
             stage1Locked = true;
         }
-
         emit Deposited(msg.sender, tokenInfo);
     }
 
