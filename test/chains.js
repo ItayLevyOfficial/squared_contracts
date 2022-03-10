@@ -16,14 +16,17 @@ const chains = {
       address: '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake Manager LP
     },
     sqrdToken: {
+      address: '0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8',
       decimals: 6,
+      slot: 9, // To update the balance manually on hardhat network
       name: 'SQRD',
     },
     sqrdLpToken: {
+      address: '0xb9bEECD1A582768711dE1EE7B0A1d582D9d72a6C',
       decimals: 6,
+      slot: 9, // To update the balance manually on hardhat network
       name: 'SQRD_LP',
     },
-    managerToken: {
   },
   ethereum: {
     launchContractAddress: '0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55',
