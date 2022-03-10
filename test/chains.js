@@ -30,13 +30,13 @@ const chains = {
     launchContractAddress: '0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55',
     nativeToken: {
       address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-      chainlinkAddress: '0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419',
+      chainlinkAddress: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
       decimals: 18,
       name: 'ETH',
     },
     stableToken: {
       address: '0x40918Ba7f132E0aCba2CE4de4c4baF9BD2D7D849',
-      chainlinkAddress: '0x9A37E1abFC430B9f5E204CA9294809c1AF37F697',
+      chainlinkAddress: '0x8fFfFfd4AfB6115b954Bd326cbe7B4BA576818f6',
       decimals: 6,
       slot: 9, // To update the balance manually on hardhat network
       name: 'USDC',
@@ -59,4 +59,4 @@ const chains = {
   },
 }
 
-module.exports = { selectedChain: chains.harmonyTestnet }
+module.exports = { selectedChain: chains.ethereum }
