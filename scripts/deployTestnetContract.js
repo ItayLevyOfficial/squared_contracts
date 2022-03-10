@@ -1,7 +1,7 @@
 const { ethers } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 const { supportNativeToken, supportStableToken } = require('../test/utils')
-const { deployContract } = require('./utils')
+const { deployContract, deployPool } = require('./utils')
 
 const main = async () => {
   const treasuryAddress = ethers.Wallet.createRandom().address
@@ -15,6 +15,25 @@ const main = async () => {
   await supportStableToken({
     defiRoundContract: deployedContract,
     stableTokenAddress: selectedChain.stableToken.address,
+  })
+  const fakeSQRD = await deployContract({ contractName: 'FakeSQRD' })
+  const fakeSQRDLP = await deployContract({ contractName: 'FakeSQRDLP' })
+  await deployPool({
+    tokenName: selectedChain.nativeToken.name,
+    tokenAddress: selectedChain.nativeToken.address,
+    poolName: 'EthPool',
+  })
+  await deployPool({
+    tokenName: selectedChain.stableToken.name,
+    tokenAddress: selectedChain.stableToken.address,
+  })
+  await deployPool({
+    tokenName: selectedChain.sqrdToken.name,
+    tokenAddress: fakeSQRD.address,
+  })
+  await deployPool({
+    tokenName: selectedChain.sqrdLpToken.name,
+    tokenAddress: fakeSQRDLP.address,
   })
 }
 

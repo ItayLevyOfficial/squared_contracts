@@ -3,9 +3,6 @@ const { selectedChain } = require('../test/chains')
 const { supportNativeToken, supportStableToken } = require('../test/utils')
 const { deployContract, deployPool } = require('./utils')
 
-
-
-
 const main = async () => {
   const fakeSQRD = await deployContract({ contractName: 'FakeSQRD' })
   const fakeSQRDLP = await deployContract({ contractName: 'FakeSQRDLP' })
