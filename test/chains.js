@@ -18,13 +18,11 @@ const chains = {
     sqrdToken: {
       address: '0x8A93d247134d91e0de6f96547cB0204e5BE8e5D8',
       decimals: 6,
-      slot: 9, // To update the balance manually on hardhat network
       name: 'SQRD',
     },
     sqrdLpToken: {
       address: '0xb9bEECD1A582768711dE1EE7B0A1d582D9d72a6C',
       decimals: 6,
-      slot: 9, // To update the balance manually on hardhat network
       name: 'SQRD_LP',
     },
   },
