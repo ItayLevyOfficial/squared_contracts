@@ -1,25 +1,10 @@
-const { ethers, upgrades } = require('hardhat')
+const { ethers } = require('hardhat')
 const { selectedChain } = require('../test/chains')
 const { supportNativeToken, supportStableToken } = require('../test/utils')
-const { deployContract } = require('./utils')
+const { deployContract, deployPool } = require('./utils')
 
 
-const deployPool = async ({ tokenName, tokenAddress, poolName = 'Pool' }) => {
-  const PoolRound = await ethers.getContractFactory(poolName)
-  const poolRound = await upgrades.deployProxy(
-    PoolRound,
-    [
-      `${tokenAddress}`,
-      `${selectedChain.managerToken.address}`,
-      `${tokenName}`,
-      `${tokenName}`,
-    ],
-    { initializer: 'initialize' },
-  )
-  await poolRound.deployed()
-  const poolContractAddress = (await poolRound.deployed()).address
-  console.table({ [`${tokenName} pool`]: poolContractAddress })
-}
+
 
 const main = async () => {
   const fakeSQRD = await deployContract({ contractName: 'FakeSQRD' })
