@@ -15,6 +15,15 @@ const chains = {
     managerToken: {
       address: '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake Manager LP
     },
+    sqrdToken: {
+      decimals: 6,
+      name: 'SQRD',
+    },
+    sqrdLpToken: {
+      decimals: 6,
+      name: 'SQRD_LP',
+    },
+    managerToken: {
   },
   ethereum: {
     launchContractAddress: '0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55',
