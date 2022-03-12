@@ -31,13 +31,21 @@ const chains = {
       address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
       chainlinkAddress: '0x9326BFA02ADD2366b30bacB125260Af641031331',
       decimals: 18,
-      name: 'KETH',
+      name: 'ETH',
     },
     stableToken: {
       address: '0xdCFaB8057d08634279f8201b55d311c2a67897D2',
       chainlinkAddress: '0x9211c6b3BF41A10F78539810Cf5c64e1BB78Ec60',
       decimals: 6,
       name: 'USDC',
+    },
+    sqrdToken: {
+      decimals: 6,
+      name: 'SQRD',
+    },
+    sqrdLpToken: {
+      decimals: 6,
+      name: 'SQRD_LP',
     },
     managerToken: {
       address: '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake Manager LP
