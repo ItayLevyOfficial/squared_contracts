@@ -57,5 +57,8 @@ module.exports = {
       url: `https://api.s0.b.hmny.io/`,
       accounts: [testingPrivateKey],
     },
+    kovan: {
+      
+    }
   },
 }

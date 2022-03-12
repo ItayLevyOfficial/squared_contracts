@@ -31,7 +31,7 @@ const chains = {
       address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
       chainlinkAddress: '0x9326BFA02ADD2366b30bacB125260Af641031331',
       decimals: 18,
-      name: 'ETH',
+      name: 'KETH',
     },
     stableToken: {
       address: '0xdCFaB8057d08634279f8201b55d311c2a67897D2',
