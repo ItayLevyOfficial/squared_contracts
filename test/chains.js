@@ -26,6 +26,14 @@ const chains = {
       name: 'SQRD_LP',
     },
   },
+  kovan: {
+    nativeToken: {
+      address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
+      chainlinkAddress: '0x9326BFA02ADD2366b30bacB125260Af641031331',
+      decimals: 18, 
+      name: 'ETH'  
+    }
+  },
   ethereum: {
     launchContractAddress: '0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55',
     nativeToken: {
