@@ -58,7 +58,8 @@ module.exports = {
       accounts: [testingPrivateKey],
     },
     kovan: {
-      
-    }
+      url: 'https://kovan.infura.io/v3/fd7b0a37ee4249039dbf93ac592eb34a',
+      accounts: [testingPrivateKey],
+    },
   },
 }
