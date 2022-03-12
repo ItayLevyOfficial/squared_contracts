@@ -30,17 +30,18 @@ const chains = {
     nativeToken: {
       address: '0xd0A1E359811322d97991E03f863a0C30C2cF029C',
       chainlinkAddress: '0x9326BFA02ADD2366b30bacB125260Af641031331',
-      decimals: 18, 
-      name: 'ETH'  
-    }, stableToken: {
+      decimals: 18,
+      name: 'ETH',
+    },
+    stableToken: {
       address: '0xdCFaB8057d08634279f8201b55d311c2a67897D2',
       chainlinkAddress: '0x9211c6b3BF41A10F78539810Cf5c64e1BB78Ec60',
       decimals: 6,
-      name: 'USDC'
+      name: 'USDC',
     },
     managerToken: {
       address: '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake Manager LP
-    }
+    },
   },
   ethereum: {
     launchContractAddress: '0xF32D39ff9f6Aa7a7A64d7a4F00a54826Ef791a55',
@@ -75,4 +76,4 @@ const chains = {
   },
 }
 
-module.exports = { selectedChain: chains.ethereum }
+module.exports = { selectedChain: chains.kovan }
