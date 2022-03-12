@@ -40,10 +40,12 @@ const chains = {
       name: 'USDC',
     },
     sqrdToken: {
+      address: '0x48B51bC25Aa41C1c6CeBc1797BF4FF5411354E5E',
       decimals: 6,
       name: 'SQRD',
     },
     sqrdLpToken: {
+      address: '0x0a863a4A66fBf86fb4D1F737945C836F571C403F',
       decimals: 6,
       name: 'SQRD_LP',
     },
