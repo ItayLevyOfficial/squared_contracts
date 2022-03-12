@@ -32,6 +32,14 @@ const chains = {
       chainlinkAddress: '0x9326BFA02ADD2366b30bacB125260Af641031331',
       decimals: 18, 
       name: 'ETH'  
+    }, stableToken: {
+      address: '0xdCFaB8057d08634279f8201b55d311c2a67897D2',
+      chainlinkAddress: '0x9211c6b3BF41A10F78539810Cf5c64e1BB78Ec60',
+      decimals: 6,
+      name: 'USDC'
+    },
+    managerToken: {
+      address: '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake Manager LP
     }
   },
   ethereum: {
