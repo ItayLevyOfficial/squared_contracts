@@ -14,7 +14,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-const testingPrivateKey = `316b96b8525029746b7283e51634e70b2339f38d7e005652c56aa009a22f6404`
+const testingPrivateKey = `0eeadbe03ac4338e59d7c7a4d04e70519484b5608690470b31d05811fa90ee9a`
 
 const optimizerSettings = {
   optimizer: {
@@ -55,6 +55,10 @@ module.exports = {
     },
     harmonyTestnet: {
       url: `https://api.s0.b.hmny.io/`,
+      accounts: [testingPrivateKey],
+    },
+    kovan: {
+      url: 'https://kovan.infura.io/v3/fd7b0a37ee4249039dbf93ac592eb34a',
       accounts: [testingPrivateKey],
     },
   },
