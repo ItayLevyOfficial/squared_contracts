@@ -113,4 +113,4 @@ const chains = {
   },
 }
 
-module.exports = { selectedChain: chains.kovan }
+module.exports = { selectedChain: chains.moonbase }
