@@ -93,7 +93,7 @@ const chains = {
     },
     stableToken: {
       address: '0xdCFaB8057d08634279f8201b55d311c2a67897D2',
-      chainlinkAddress: '0x9211c6b3BF41A10F78539810Cf5c64e1BB78Ec60',
+      chainlinkAddress: '0x3669da30c33D27A6A579548fCfc345fE5dEdda6e',
       decimals: 6,
       name: 'USDC',
     },
