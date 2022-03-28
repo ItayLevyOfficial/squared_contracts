@@ -84,6 +84,33 @@ const chains = {
       address: '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake Manager LP
     },
   },
+  moonbase: {
+    nativeToken: {
+      address: '0x1436aE0dF0A8663F18c0Ec51d7e2E46591730715',
+      chainlinkAddress: '0x3669da30c33D27A6A579548fCfc345fE5dEdda6e',
+      decimals: 18,
+      name: 'DEV',
+    },
+    stableToken: {
+      address: '0xdCFaB8057d08634279f8201b55d311c2a67897D2',
+      chainlinkAddress: '0x3669da30c33D27A6A579548fCfc345fE5dEdda6e',
+      decimals: 6,
+      name: 'USDC',
+    },
+    sqrdToken: {
+      address: '0x48B51bC25Aa41C1c6CeBc1797BF4FF5411354E5E',
+      decimals: 6,
+      name: 'SQRD',
+    },
+    sqrdLpToken: {
+      address: '0x0a863a4A66fBf86fb4D1F737945C836F571C403F',
+      decimals: 6,
+      name: 'SQRD_LP',
+    },
+    managerToken: {
+      address: '0xB0f05d25e41FbC2b52013099ED9616f1206Ae21B', // Fake Manager LP
+    },
+  },
 }
 
-module.exports = { selectedChain: chains.kovan }
+module.exports = { selectedChain: chains.moonbase }
